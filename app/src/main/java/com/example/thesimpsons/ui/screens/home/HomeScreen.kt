@@ -29,7 +29,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 (uiState as UiState.Error).error }
             UiState.Loading -> CircularProgressIndicator()
             is UiState.Success -> {
-                Text((uiState as UiState.Success).characterDto.name, color = Color.White)
+                Text((uiState as UiState.Success).character.name, color = Color.White)
             }
         }
     }

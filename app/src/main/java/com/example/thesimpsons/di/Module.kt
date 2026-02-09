@@ -1,5 +1,9 @@
-package com.example.thesimpsons.data.network.di
+package com.example.thesimpsons.di
 
+import android.app.Application
+import androidx.room.Room
+import com.example.thesimpsons.data.local.AppDataBase
+import com.example.thesimpsons.data.local.CharacterDao
 import com.example.thesimpsons.data.network.ApiClient
 import dagger.Module
 import dagger.Provides
@@ -26,6 +30,24 @@ object Module {
     @Singleton
     fun provideApiClient(retrofit: Retrofit):ApiClient {
         return retrofit.create(ApiClient::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDataBase(app: Application): AppDataBase {
+        return Room.databaseBuilder(
+            app,
+            AppDataBase::class.java,
+            "app_db"
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterDao(appDatabase: AppDataBase):CharacterDao {
+        return appDatabase.characterDao
     }
 
 
