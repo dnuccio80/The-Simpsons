@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.paging)
 
     // Dagger Hilt
     implementation(libs.hilt.android)
@@ -74,6 +75,9 @@ dependencies {
     implementation (libs.androidx.hilt.navigation.compose)
 
     // Paging 3
+    implementation(libs.app.paging.compose.common)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
 
     // Data Store
 

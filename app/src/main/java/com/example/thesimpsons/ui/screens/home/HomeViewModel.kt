@@ -22,7 +22,7 @@ class HomeViewModel @Inject constructor(private val repository: RepositoryImpl):
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                val character = repository.getSingleCharacter(15).first()
+                val character = repository.getSingleCharacter(2).first()
                 _uiState.value = UiState.Success(character)
             }catch (e:Exception) {
                 _uiState.value = UiState.Error(e)

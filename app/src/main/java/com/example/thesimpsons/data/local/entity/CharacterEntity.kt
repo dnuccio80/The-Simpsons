@@ -16,6 +16,7 @@ data class CharacterEntity(
     val portraitImage: String,
     val phrases: List<String>,
     val status: String,
+    val page:Int
 ) {
     fun toDomain():CharacterDomain = CharacterDomain(
         id = id,

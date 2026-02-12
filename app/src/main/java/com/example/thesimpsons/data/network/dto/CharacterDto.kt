@@ -24,6 +24,7 @@ data class CharacterDto(
         occupation = occupation?:"Unknown",
         portraitImage = portraitImage.orEmpty(),
         phrases = phrases.orEmpty(),
-        status = status?:"Unknown"
+        status = status?:"Unknown",
+        page = 0
     )
 }

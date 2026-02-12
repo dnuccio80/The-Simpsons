@@ -1,5 +1,6 @@
 package com.example.thesimpsons.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -18,5 +19,14 @@ interface CharacterDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM characterentity where id = :id)")
     suspend fun exists(id:Int):Boolean
+
+    @Query("SELECT * FROM CharacterEntity ORDER BY page, id")
+    fun pagingSource():PagingSource<Int,CharacterEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(characters: List<CharacterEntity>)
+
+    @Query("DELETE FROM CharacterEntity")
+    suspend fun clearAll()
 
 }
