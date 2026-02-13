@@ -2,6 +2,7 @@ package com.example.thesimpsons.ui.screens.characters
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +46,7 @@ import com.example.thesimpsons.ui.theme.LightBackgroundCard
 import com.example.thesimpsons.ui.theme.LightText
 
 @Composable
-fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel = hiltViewModel()) {
+fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel = hiltViewModel(), onNavigateToDetails:(Int) -> Unit) {
 
     val characters = viewModel.characters.collectAsLazyPagingItems()
 
@@ -71,14 +72,14 @@ fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel 
                     .padding(innerPadding)
                     .background(backgroundScreen), contentAlignment = Alignment.Center
             ) {
-                CharacterList(characters)
+                CharacterList(characters) { onNavigateToDetails(it) }
             }
         }
     }
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterDomain>) {
+fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick:(Int) -> Unit) {
 
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -92,20 +93,22 @@ fun CharacterList(characters: LazyPagingItems<CharacterDomain>) {
             key = { index -> characters[index]?.id ?: index }
         ) { index ->
             characters[index]?.let {
-                ItemList(it)
+                ItemList(it) { onItemClick(it.id) }
             }
         }
     }
 }
 
 @Composable
-fun ItemList(character: CharacterDomain) {
+fun ItemList(character: CharacterDomain, onClick:() -> Unit) {
 
     val backgroundCardColor = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
 
     Card(
         Modifier
-            .size(200.dp),
+            .size(200.dp)
+            .clickable { onClick() }
+        ,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(16.dp),
         colors = CardDefaults.cardColors(
@@ -114,7 +117,7 @@ fun ItemList(character: CharacterDomain) {
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             AsyncImage(
-                model = "${Images.PATH}${Images.PORTRAIT_SIZE}${character.portraitImage}",
+                model = Images.createPath(Images.PORTRAIT_SIZE, character.portraitImage),
                 contentDescription = "character image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

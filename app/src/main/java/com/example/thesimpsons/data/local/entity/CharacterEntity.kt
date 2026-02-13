@@ -27,6 +27,6 @@ data class CharacterEntity(
         occupation = occupation,
         portraitImage = portraitImage,
         phrases = phrases,
-        status = status
+        isAlive = status == "Alive"
     )
 }

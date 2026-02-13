@@ -11,6 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.thesimpsons.ui.navigation.Routes
+import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.home.HomeScreen
 import com.example.thesimpsons.ui.theme.TheSimpsonsTheme
@@ -24,8 +31,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             TheSimpsonsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CharactersScreen(innerPadding)
+                    val navController = rememberNavController()
 
+                    NavHost(navController, startDestination = Routes.Characters.route) {
+                        composable(Routes.Characters.route) { CharactersScreen(innerPadding) { navController.navigate(Routes.CharacterDetails.createRoute(it)) } }
+                        composable(Routes.CharacterDetails.route, arguments = listOf(
+                            navArgument("id") {
+                                type = NavType.IntType
+                            }
+                        )) {navBackStackEntry ->
+                            CharacterDetailsScreen(innerPadding,navBackStackEntry.arguments?.getInt("id")?:0)
+                        }
+                    }
                 }
             }
         }

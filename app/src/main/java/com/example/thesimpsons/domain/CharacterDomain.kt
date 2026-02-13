@@ -11,5 +11,5 @@ data class CharacterDomain(
     val occupation: String,
     val portraitImage: String,
     val phrases: List<String>,
-    val status: String,
+    val isAlive: Boolean,
 )

@@ -82,6 +82,9 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Data Store
 
     // Firebase

@@ -16,7 +16,7 @@ val GreenApp = Color(0xFF1E720E)
 
 // Dark Mode
 val DarkBackgroundApp = Color(0xFF000000)
-val DarkBackgroundCard = Color(0xFF443737)
+val DarkBackgroundCard = Color(0xFF252525)
 val DarkText = Color(0xFFFFFFFF)
 
 // Light Mode
