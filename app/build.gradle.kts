@@ -79,6 +79,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     // Data Store
 
     // Firebase
