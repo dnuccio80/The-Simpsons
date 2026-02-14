@@ -5,23 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.savedstate.savedState
 import com.example.thesimpsons.ui.navigation.Routes
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.core.BottomBar
-import com.example.thesimpsons.ui.screens.home.HomeScreen
 import com.example.thesimpsons.ui.theme.TheSimpsonsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,10 +26,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TheSimpsonsTheme {
+                val navController = rememberNavController()
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomBar() }) { innerPadding ->
-                    val navController = rememberNavController()
+                    bottomBar = { BottomBar { } }) { innerPadding ->
 
                     NavHost(navController, startDestination = Routes.Characters.route) {
                         composable(Routes.Characters.route) {
@@ -49,15 +44,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             Routes.CharacterDetails.route, arguments = listOf(
-                            navArgument("id") {
-                                type = NavType.IntType
-                            }
-                        )) { navBackStackEntry ->
+                                navArgument("id") {
+                                    type = NavType.IntType
+                                }
+                            )) { navBackStackEntry ->
                             CharacterDetailsScreen(
                                 innerPadding,
                                 navBackStackEntry.arguments?.getInt("id") ?: 0
                             ) {
-                                if(navController.previousBackStackEntry != null) {
+                                if (navController.previousBackStackEntry != null) {
                                     navController.popBackStack()
                                 }
                             }

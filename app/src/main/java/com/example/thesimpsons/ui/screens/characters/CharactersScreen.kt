@@ -40,6 +40,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.thesimpsons.domain.CharacterDomain
 import com.example.thesimpsons.ui.core.Images
+import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.theme.DarkBackgroundApp
 import com.example.thesimpsons.ui.theme.DarkBackgroundCard
 import com.example.thesimpsons.ui.theme.DarkText
@@ -52,8 +53,6 @@ import com.example.thesimpsons.ui.theme.LightText
 fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel = hiltViewModel(), onNavigateToDetails:(Int) -> Unit) {
 
     val characters = viewModel.characters.collectAsLazyPagingItems()
-
-    val backgroundScreen = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
 
     when (characters.loadState.refresh) {
         is LoadState.Loading -> {
@@ -69,12 +68,7 @@ fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel 
         }
 
         is LoadState.NotLoading -> {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .background(backgroundScreen), contentAlignment = Alignment.Center
-            ) {
+            ScreenContainer(innerPadding) {
                 CharacterList(characters) { onNavigateToDetails(it) }
             }
         }

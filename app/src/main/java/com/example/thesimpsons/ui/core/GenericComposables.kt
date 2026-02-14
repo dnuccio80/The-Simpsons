@@ -1,15 +1,24 @@
 package com.example.thesimpsons.ui.core
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.thesimpsons.ui.theme.DarkBackgroundApp
+import com.example.thesimpsons.ui.theme.LightBackgroundApp
 
 @Composable
 fun TitleItem(text:String, color: Color = Color.White) {
@@ -58,5 +67,20 @@ fun InfoTextItem(concept:String, description:String, color: Color = Color.White)
 
     }
 
+}
+
+@Composable
+fun ScreenContainer(innerPadding:PaddingValues, content:@Composable () -> Unit) {
+
+    val backgroundScreen = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .background(backgroundScreen), contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
 }
 

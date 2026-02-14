@@ -43,6 +43,7 @@ import com.example.thesimpsons.domain.CharacterDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.InfoTextItem
+import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.core.SubtitleItem
 import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.screens.home.UiState
@@ -59,7 +60,7 @@ fun CharacterDetailsScreen(
     innerPadding: PaddingValues,
     characterId: Int,
     viewModel: CharacterDetailsViewModel = hiltViewModel(),
-    onBackClick:() -> Unit
+    onBackClick: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -88,7 +89,7 @@ fun CharacterDetailsScreen(
 }
 
 @Composable
-fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick:() -> Unit) {
+fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick: () -> Unit) {
 
     val backgroundApp = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
     val backgroundCard = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
@@ -97,12 +98,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
     val aliveText = "ALIVE"
     val deadText = "DEAD"
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(backgroundApp)
-            .padding(innerPadding)
-    ) {
+    ScreenContainer(innerPadding) {
         Column(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,7 +110,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                     contentDescription = "back button",
                     tint = textColor,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(start = 16.dp, top = 16.dp)
                         .clickable {
                             onBackClick()
                         })
@@ -159,7 +155,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                 contentAlignment = Alignment.TopCenter
             ) {
                 Card(
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
                     modifier = Modifier.padding(top = 24.dp),
                     colors = CardDefaults.cardColors(containerColor = backgroundCard),
                 ) {
@@ -170,12 +166,17 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                             .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InfoTextItem("Age:", if(character.age != 0) character.age.toString() else "Unknown" )
+                        InfoTextItem(
+                            "Age:",
+                            if (character.age != 0) character.age.toString() else "Unknown"
+                        )
                         InfoTextItem("Birthdate:", character.birthdate)
                         InfoTextItem("Gender:", character.gender)
                         InfoTextItem("Occupation:", character.occupation)
-                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            SubtitleItem("Iconic phrases")
+                        if (character.phrases.isNotEmpty()) {
+                            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                SubtitleItem("Iconic phrases")
+                            }
                         }
                         character.phrases.forEach {
                             BodyTextItem(it)
@@ -194,5 +195,6 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
 
         }
     }
+
 
 }
