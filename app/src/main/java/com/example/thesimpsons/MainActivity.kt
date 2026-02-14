@@ -20,6 +20,7 @@ import androidx.savedstate.savedState
 import com.example.thesimpsons.ui.navigation.Routes
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
+import com.example.thesimpsons.ui.screens.core.BottomBar
 import com.example.thesimpsons.ui.screens.home.HomeScreen
 import com.example.thesimpsons.ui.theme.TheSimpsonsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,19 +32,33 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TheSimpsonsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomBar() }) { innerPadding ->
                     val navController = rememberNavController()
 
                     NavHost(navController, startDestination = Routes.Characters.route) {
-                        composable(Routes.Characters.route) { CharactersScreen(innerPadding) { navController.navigate(Routes.CharacterDetails.createRoute(it)) } }
-                        composable(Routes.CharacterDetails.route, arguments = listOf(
+                        composable(Routes.Characters.route) {
+                            CharactersScreen(innerPadding) {
+                                navController.navigate(Routes.CharacterDetails.createRoute(it)) {
+                                    restoreState = true
+                                    launchSingleTop = true
+
+                                }
+                            }
+                        }
+                        composable(
+                            Routes.CharacterDetails.route, arguments = listOf(
                             navArgument("id") {
                                 type = NavType.IntType
                             }
-                        )) {navBackStackEntry ->
-                            CharacterDetailsScreen(innerPadding,navBackStackEntry.arguments?.getInt("id")?:0) {
-                                navController.navigate(Routes.Characters.route) {
-                                    restoreState = true
+                        )) { navBackStackEntry ->
+                            CharacterDetailsScreen(
+                                innerPadding,
+                                navBackStackEntry.arguments?.getInt("id") ?: 0
+                            ) {
+                                if(navController.previousBackStackEntry != null) {
+                                    navController.popBackStack()
                                 }
                             }
                         }
@@ -53,4 +68,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
