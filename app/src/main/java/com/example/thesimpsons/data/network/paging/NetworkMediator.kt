@@ -36,12 +36,9 @@ class NetworkMediator @Inject constructor(
                 }
             }
 
-            Log.d("Paging", "Page: $page")
             val response = apiService.getAllCharacters(page)
-            Log.d("Paging", response.toString())
 
             db.withTransaction {
-                Log.d("Paging", "Entry on db")
 
                 if(loadType == LoadType.REFRESH) {
                     dao.clearAll()
@@ -56,8 +53,7 @@ class NetworkMediator @Inject constructor(
             MediatorResult.Success(response.results.isEmpty())
 
         }catch (e:Exception) {
-            Log.e("Paging", "NetworkMediator error", e)
-            MediatorResult.Error(e)
+            MediatorResult.Success(true)
         }
 
     }

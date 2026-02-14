@@ -170,7 +170,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                             .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InfoTextItem("Age:", character.age.toString())
+                        InfoTextItem("Age:", if(character.age != 0) character.age.toString() else "Unknown" )
                         InfoTextItem("Birthdate:", character.birthdate)
                         InfoTextItem("Gender:", character.gender)
                         InfoTextItem("Occupation:", character.occupation)
