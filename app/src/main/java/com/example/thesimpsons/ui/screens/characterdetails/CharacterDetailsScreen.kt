@@ -3,6 +3,7 @@ package com.example.thesimpsons.ui.screens.characterdetails
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,10 +18,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +59,7 @@ fun CharacterDetailsScreen(
     innerPadding: PaddingValues,
     characterId: Int,
     viewModel: CharacterDetailsViewModel = hiltViewModel(),
+    onBackClick:() -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -77,13 +82,13 @@ fun CharacterDetailsScreen(
         }
 
         is UiState.Success -> {
-            Details((uiState as UiState.Success).character, innerPadding)
+            Details((uiState as UiState.Success).character, innerPadding) { onBackClick() }
         }
     }
 }
 
 @Composable
-fun Details(character: CharacterDomain, innerPadding: PaddingValues) {
+fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick:() -> Unit) {
 
     val backgroundApp = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
     val backgroundCard = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
@@ -103,6 +108,17 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
+                Icon(
+                    Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = "back button",
+                    tint = textColor,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable {
+                            onBackClick()
+                        })
+            }
             Box(Modifier.size(280.dp), contentAlignment = Alignment.BottomCenter) {
                 Card(
                     Modifier

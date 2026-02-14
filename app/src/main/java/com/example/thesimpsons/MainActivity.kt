@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.savedState
 import com.example.thesimpsons.ui.navigation.Routes
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
@@ -40,7 +41,11 @@ class MainActivity : ComponentActivity() {
                                 type = NavType.IntType
                             }
                         )) {navBackStackEntry ->
-                            CharacterDetailsScreen(innerPadding,navBackStackEntry.arguments?.getInt("id")?:0)
+                            CharacterDetailsScreen(innerPadding,navBackStackEntry.arguments?.getInt("id")?:0) {
+                                navController.navigate(Routes.Characters.route) {
+                                    restoreState = true
+                                }
+                            }
                         }
                     }
                 }
