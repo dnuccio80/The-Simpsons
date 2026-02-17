@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomBar { } }) { innerPadding ->
+                    bottomBar = { BottomBar(navController) }) { innerPadding ->
 
-                    NavHost(navController, startDestination = Routes.Episodes.route) {
+                    NavHost(navController, startDestination = Routes.Characters.route) {
                         composable(Routes.Characters.route) {
                             CharactersScreen(innerPadding) {
                                 navController.navigate(Routes.CharacterDetails.createRoute(it)) {
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                                 id = navBackStackEntry.arguments?.getInt("id") ?: 0,
                                 innerPadding = innerPadding
                             ) {
-                                if(navController.previousBackStackEntry != null) navController.popBackStack()
+                                if (navController.previousBackStackEntry != null) navController.popBackStack()
                             }
                         }
                     }

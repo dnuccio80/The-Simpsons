@@ -11,10 +11,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun BottomBar(onNavigate:() -> Unit) {
+fun BottomBar(navController: NavHostController) {
 
     val navBarItems = listOf(
         NavigationItem.Characters,
@@ -22,15 +24,22 @@ fun BottomBar(onNavigate:() -> Unit) {
         NavigationItem.Locations
     )
 
-    var idSelected by rememberSaveable { mutableIntStateOf(1) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
 
     NavigationBar(modifier = Modifier.fillMaxWidth(), contentColor = Color.Red) {
         navBarItems.forEach {
             NavigationBarItem(
-                selected = idSelected == it.id,
+                selected = currentRoute == it.route,
                 onClick = {
-                    idSelected = it.id
-                    onNavigate()
+                    navController.navigate(it.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 icon = it.icon,
                 label = { Text(it.name) }
