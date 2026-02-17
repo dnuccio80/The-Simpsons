@@ -1,15 +1,20 @@
 package com.example.thesimpsons.data.network
 
-import androidx.paging.PagingData
-import com.example.thesimpsons.data.network.dto.CharacterDto
-import com.example.thesimpsons.data.network.dto.CharacterWrapper
-import com.example.thesimpsons.domain.CharacterDomain
-import kotlinx.coroutines.flow.Flow
+import com.example.thesimpsons.data.local.dao.EpisodeDao
+import com.example.thesimpsons.data.network.dto.character.CharacterDto
+import com.example.thesimpsons.data.network.dto.character.CharacterWrapper
+import com.example.thesimpsons.data.network.dto.episode.EpisodeDto
+import com.example.thesimpsons.data.network.dto.episode.EpisodeWrapper
 import javax.inject.Inject
 
 class ApiService @Inject constructor(private val apiClient: ApiClient) {
 
-    suspend fun getSingleCharacter(id:Int):CharacterDto = apiClient.getSingleCharacter("characters/$id")
+    suspend fun getSingleCharacter(id:Int): CharacterDto = apiClient.getSingleCharacter("characters/$id")
 
-    suspend fun getAllCharacters(page:Int):CharacterWrapper = apiClient.getAllCharacters(page)
+    suspend fun getAllCharacters(page:Int): CharacterWrapper = apiClient.getAllCharacters(page)
+
+    suspend fun getSingleEpisode(id:Int): EpisodeDto = apiClient.getSingleEpisode("episodes/$id")
+
+    suspend fun getAllEpisodes(page:Int): EpisodeWrapper = apiClient.getAllEpisodes(page)
+
 }

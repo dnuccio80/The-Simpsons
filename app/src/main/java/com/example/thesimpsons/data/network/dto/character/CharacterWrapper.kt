@@ -1,4 +1,4 @@
-package com.example.thesimpsons.data.network.dto
+package com.example.thesimpsons.data.network.dto.character
 
 data class CharacterWrapper(
     val next:String?,

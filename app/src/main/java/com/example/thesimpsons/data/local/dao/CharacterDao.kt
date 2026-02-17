@@ -1,4 +1,4 @@
-package com.example.thesimpsons.data.local
+package com.example.thesimpsons.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao

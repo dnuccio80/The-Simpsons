@@ -9,4 +9,8 @@ interface Repository {
 
     fun getAllCharacters():Flow<PagingData<CharacterDomain>>
 
+    suspend fun getSingleEpisode(id:Int):Flow<EpisodeDomain>
+
+    fun getAllEpisodes():Flow<PagingData<EpisodeDomain>>
+
 }

@@ -1,7 +1,6 @@
-package com.example.thesimpsons.data.network.dto
+package com.example.thesimpsons.data.network.dto.character
 
 import com.example.thesimpsons.data.local.entity.CharacterEntity
-import com.example.thesimpsons.domain.CharacterDomain
 import com.google.gson.annotations.SerializedName
 
 data class CharacterDto(

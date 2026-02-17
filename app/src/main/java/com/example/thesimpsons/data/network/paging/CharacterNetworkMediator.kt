@@ -1,22 +1,21 @@
 package com.example.thesimpsons.data.network.paging
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.thesimpsons.data.local.AppDataBase
-import com.example.thesimpsons.data.local.CharacterDao
+import com.example.thesimpsons.data.local.dao.CharacterDao
 import com.example.thesimpsons.data.local.entity.CharacterEntity
 import com.example.thesimpsons.data.network.ApiService
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class NetworkMediator @Inject constructor(
+class CharacterNetworkMediator @Inject constructor(
     private val apiService:ApiService,
     private val db:AppDataBase,
-    private val dao:CharacterDao
+    private val dao: CharacterDao
 ):RemoteMediator<Int,CharacterEntity>() {
 
     override suspend fun load(
