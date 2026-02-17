@@ -1,4 +1,4 @@
-package com.example.thesimpsons.ui.screens.core
+package com.example.thesimpsons.ui.navigation
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -12,19 +12,19 @@ import com.example.thesimpsons.R
 
 sealed class NavigationItem(val route:String, val name:String,val icon:@Composable () -> Unit) {
 
-    data object Characters:NavigationItem(route = "characters", name = "Characters", { Icon(
+    data object Characters: NavigationItem(route = "characters", name = "Characters", { Icon(
         painterResource(R.drawable.homer_ic),
         contentDescription = "",
         modifier = Modifier.size(24.dp)
     ) })
 
-    data object Episodes:NavigationItem(route = "episodes", name = "Episodes", { Icon(
+    data object Episodes: NavigationItem(route = "episodes", name = "Episodes", { Icon(
         painterResource(R.drawable.camera_ic),
         contentDescription = "",
         modifier = Modifier.size(24.dp)
     ) })
 
-    data object Locations:NavigationItem(route = "locations" , name = "Episodes", { Icon(
+    data object Locations: NavigationItem(route = "locations" , name = "Locations", { Icon(
         Icons.Filled.LocationOn,
         contentDescription = "",
         modifier = Modifier.size(24.dp)
