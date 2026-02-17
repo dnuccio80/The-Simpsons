@@ -18,45 +18,59 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.thesimpsons.ui.theme.DarkBackgroundApp
+import com.example.thesimpsons.ui.theme.DarkText
 import com.example.thesimpsons.ui.theme.LightBackgroundApp
+import com.example.thesimpsons.ui.theme.LightText
 
 @Composable
-fun TitleItem(text:String, color: Color = Color.White) {
+fun TitleItem(text:String,whiteColor:Boolean = false) {
+
+    val color = if(isSystemInDarkTheme()) DarkText else LightText
+
     Text(
         text,
         fontWeight = FontWeight.ExtraBold,
         fontSize = 24.sp,
-        color = color
+        color = if(whiteColor) Color.White else color
     )
 }
 
 @Composable
-fun SubtitleItem(text:String, color: Color = Color.White, modifier: Modifier = Modifier) {
+fun SubtitleItem(text:String,whiteColor:Boolean = false, modifier: Modifier = Modifier) {
+
+    val color = if(isSystemInDarkTheme()) DarkText else LightText
+
     Text(
         text,
         modifier = modifier,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = color
+        color = if(whiteColor) Color.White else color
     )
 }
 
 @Composable
-fun BodyTextItem(text:String, color: Color = Color.White) {
+fun BodyTextItem(text:String, whiteColor:Boolean = false) {
+
+    val color = if(isSystemInDarkTheme()) DarkText else LightText
+
     Text(
         text,
         fontSize = 14.sp,
-        color = color
+        color = if(whiteColor) Color.White else color
     )
 }
 
 @Composable
-fun InfoTextItem(concept:String, description:String, color: Color = Color.White) {
+fun InfoTextItem(concept:String, description:String, whiteColor:Boolean = false) {
+
+    val color = if(isSystemInDarkTheme()) DarkText else LightText
+
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             concept,
             fontSize = 16.sp,
-            color = color,
+            color = if(whiteColor) Color.White else color,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
@@ -71,9 +85,7 @@ fun InfoTextItem(concept:String, description:String, color: Color = Color.White)
 
 @Composable
 fun ScreenContainer(innerPadding:PaddingValues, content:@Composable () -> Unit) {
-
     val backgroundScreen = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
-
     Box(
         Modifier
             .fillMaxSize()

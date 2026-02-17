@@ -1,6 +1,7 @@
 package com.example.thesimpsons.ui.screens.episodes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +34,7 @@ import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.theme.GreenApp
 
 @Composable
-fun EpisodesScreen(innerPadding: PaddingValues, viewModel: EpisodesViewModel = hiltViewModel()) {
+fun EpisodesScreen(innerPadding: PaddingValues, viewModel: EpisodesViewModel = hiltViewModel(), onEpisodeClick:(Int) -> Unit) {
 
     val episodes = viewModel.episodeList.collectAsLazyPagingItems()
 
@@ -50,14 +51,14 @@ fun EpisodesScreen(innerPadding: PaddingValues, viewModel: EpisodesViewModel = h
 
         is LoadState.NotLoading -> {
             ScreenContainer(innerPadding) {
-                LazyEpisodesColumn(episodes)
+                LazyEpisodesColumn(episodes) { onEpisodeClick(it) }
             }
         }
     }
 }
 
 @Composable
-fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>) {
+fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>, onClick: (Int) -> Unit) {
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -68,7 +69,7 @@ fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>) {
             episodes.itemCount,
             key = { index -> episodes[index]?.id ?: index }) { index ->
             episodes[index]?.let {
-                EpisodeItem(it)
+                EpisodeItem(it) { onClick(it.id) }
             }
         }
     }
@@ -76,13 +77,14 @@ fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>) {
 }
 
 @Composable
-fun EpisodeItem(episode: EpisodeDomain) {
+fun EpisodeItem(episode: EpisodeDomain, onClick:() -> Unit) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp)
             .padding(horizontal = 8.dp)
+            .clickable { onClick() }
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             AsyncImage(

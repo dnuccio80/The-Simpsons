@@ -91,7 +91,6 @@ fun CharacterDetailsScreen(
 @Composable
 fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick: () -> Unit) {
 
-    val backgroundApp = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
     val backgroundCard = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
     val borderImageColor = if (character.isAlive) GreenApp else Color.Red
     val textColor = if (isSystemInDarkTheme()) DarkText else LightText
@@ -146,7 +145,6 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
             }
             TitleItem(
                 text = character.name,
-                color = textColor
             )
             Box(
                 modifier = Modifier
@@ -188,7 +186,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor = backgroundCard)
                 ) {
-                    SubtitleItem(text = "INFORMATION", color = textColor, Modifier.padding(16.dp))
+                    SubtitleItem(text = "INFORMATION", modifier =  Modifier.padding(16.dp))
                 }
 
             }

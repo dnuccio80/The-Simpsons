@@ -15,10 +15,10 @@ data class EpisodeDto(
     fun toEntity():EpisodeEntity = EpisodeEntity(
         id = id,
         airDate = airDate.orEmpty(),
-        episodeNumber = episodeNumber?:0,
+        episodeNumber = episodeNumber?.toString()?:"",
         imagePath = imagePath.orEmpty(),
         name = name.orEmpty(),
-        season = season?:0,
+        season = season?.toString()?:"",
         page = 0,
         synopsis = synopsis.orEmpty(),
     )

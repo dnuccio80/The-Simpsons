@@ -9,20 +9,20 @@ data class EpisodeEntity(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val airDate: String,
-    val episodeNumber: Int,
+    val episodeNumber: String,
     val imagePath: String,
     val name: String,
-    val season: Int,
+    val season: String,
     val page:Int,
     val synopsis: String,
 ) {
     fun toDomain():EpisodeDomain = EpisodeDomain(
         id = id,
-        airDate = airDate,
-        episodeNumber = episodeNumber,
+        airDate = airDate.ifBlank { "Unknown" },
+        episodeNumber = episodeNumber.ifBlank { "Unknown" },
         imagePath = imagePath,
         name = name,
-        season = season,
+        season = season.ifBlank { "Unknown" },
         page = page,
         synopsis = synopsis
     )
