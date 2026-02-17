@@ -16,14 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -35,12 +33,7 @@ import com.example.thesimpsons.ui.core.InfoTextItem
 import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.core.SubtitleItem
 import com.example.thesimpsons.ui.core.TitleItem
-import com.example.thesimpsons.ui.theme.DarkBackgroundApp
-import com.example.thesimpsons.ui.theme.DarkBackgroundCard
 import com.example.thesimpsons.ui.theme.DarkText
-import com.example.thesimpsons.ui.theme.GreenApp
-import com.example.thesimpsons.ui.theme.LightBackgroundApp
-import com.example.thesimpsons.ui.theme.LightBackgroundCard
 import com.example.thesimpsons.ui.theme.LightText
 
 @Composable
