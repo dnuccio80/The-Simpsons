@@ -18,6 +18,7 @@ import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.core.BottomBar
 import com.example.thesimpsons.ui.screens.episodedetails.EpisodeDetailsScreen
 import com.example.thesimpsons.ui.screens.episodes.EpisodesScreen
+import com.example.thesimpsons.ui.screens.locations.LocationScreen
 import com.example.thesimpsons.ui.theme.TheSimpsonsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -79,6 +80,7 @@ class MainActivity : ComponentActivity() {
                                 if (navController.previousBackStackEntry != null) navController.popBackStack()
                             }
                         }
+                        composable(Routes.Location.route) { LocationScreen(innerPadding) }
                     }
                 }
             }

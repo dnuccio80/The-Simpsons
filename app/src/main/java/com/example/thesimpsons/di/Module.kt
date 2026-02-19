@@ -2,9 +2,10 @@ package com.example.thesimpsons.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.thesimpsons.data.local.AppDataBase
+import com.example.thesimpsons.data.local.db.AppDataBase
 import com.example.thesimpsons.data.local.dao.CharacterDao
 import com.example.thesimpsons.data.local.dao.EpisodeDao
+import com.example.thesimpsons.data.local.dao.LocationDao
 import com.example.thesimpsons.data.network.ApiClient
 import dagger.Module
 import dagger.Provides
@@ -55,6 +56,12 @@ object Module {
     @Singleton
     fun provideEpisodeDao(appDatabase: AppDataBase): EpisodeDao {
         return appDatabase.episodeDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationDao(appDatabase: AppDataBase): LocationDao {
+        return appDatabase.locationDao
     }
 
 

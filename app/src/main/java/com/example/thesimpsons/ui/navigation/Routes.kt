@@ -9,4 +9,5 @@ sealed class Routes(val route:String) {
     data object EpisodeDetails:Routes("episodeDetails/{id}") {
         fun createRoute(id:Int) = "episodeDetails/$id"
     }
+    data object Location:Routes("location")
 }

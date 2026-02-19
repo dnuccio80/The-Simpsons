@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.thesimpsons.ui.theme.DarkBackgroundApp
@@ -46,7 +47,8 @@ fun SubtitleItem(text:String,whiteColor:Boolean = false, modifier: Modifier = Mo
         modifier = modifier,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = if(whiteColor) Color.White else color
+        color = if(whiteColor) Color.White else color,
+        overflow = TextOverflow.Ellipsis
     )
 }
 

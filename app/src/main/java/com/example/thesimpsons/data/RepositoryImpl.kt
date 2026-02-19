@@ -6,13 +6,16 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.example.thesimpsons.data.local.dao.CharacterDao
-import com.example.thesimpsons.data.local.LocalDataSource
+import com.example.thesimpsons.data.local.data_source.LocalDataSource
 import com.example.thesimpsons.data.local.dao.EpisodeDao
+import com.example.thesimpsons.data.local.dao.LocationDao
 import com.example.thesimpsons.data.network.data_source.NetworkDataSource
-import com.example.thesimpsons.data.network.paging.CharacterNetworkMediator
-import com.example.thesimpsons.data.network.paging.EpisodeNetworkMediator
+import com.example.thesimpsons.data.network_mediator.CharacterNetworkMediator
+import com.example.thesimpsons.data.network_mediator.EpisodeNetworkMediator
+import com.example.thesimpsons.data.network_mediator.LocationNetworkMediator
 import com.example.thesimpsons.domain.CharacterDomain
 import com.example.thesimpsons.domain.EpisodeDomain
+import com.example.thesimpsons.domain.LocationDomain
 import com.example.thesimpsons.domain.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,8 +29,10 @@ class RepositoryImpl @Inject constructor(
     private val local: LocalDataSource,
     private val characterMediator: CharacterNetworkMediator,
     private val characterDao: CharacterDao,
-    private val episodeMediator:EpisodeNetworkMediator,
-    private val episodeDao:EpisodeDao
+    private val episodeMediator: EpisodeNetworkMediator,
+    private val episodeDao:EpisodeDao,
+    private val locationDao: LocationDao,
+    private val locationMediator: LocationNetworkMediator
 ) : Repository {
 
     companion object {
@@ -78,6 +83,19 @@ class RepositoryImpl @Inject constructor(
             ),
             remoteMediator = episodeMediator,
             pagingSourceFactory = { episodeDao.getPagingSource() }
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
+    }
+
+    override fun getAllLocations(): Flow<PagingData<LocationDomain>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            remoteMediator = locationMediator,
+            pagingSourceFactory = { locationDao.getPagingSource() }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }
         }
