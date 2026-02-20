@@ -63,6 +63,16 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getAllCharactersByQuery(query: String): Flow<PagingData<CharacterDomain>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { characterDao.pagingSourceSearch(query) }
+        ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
+    }
+
     override suspend fun getSingleEpisode(id: Int): Flow<EpisodeDomain> {
         return local.getSingleEpisode(id)
             .onStart {

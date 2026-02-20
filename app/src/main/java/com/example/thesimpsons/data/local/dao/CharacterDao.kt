@@ -29,4 +29,6 @@ interface CharacterDao {
     @Query("DELETE FROM CharacterEntity")
     suspend fun clearAll()
 
+    @Query("""SELECT * FROM characterentity WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%' ORDER BY name ASC""")
+    fun pagingSourceSearch(query:String):PagingSource<Int,CharacterEntity>
 }

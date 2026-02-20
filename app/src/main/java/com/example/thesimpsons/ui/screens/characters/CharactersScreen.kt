@@ -1,6 +1,6 @@
 package com.example.thesimpsons.ui.screens.characters
 
-import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -8,28 +8,28 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,45 +38,69 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.example.thesimpsons.R
 import com.example.thesimpsons.domain.CharacterDomain
 import com.example.thesimpsons.ui.core.Images
+import com.example.thesimpsons.ui.core.QuerySearchItem
 import com.example.thesimpsons.ui.core.ScreenContainer
-import com.example.thesimpsons.ui.theme.DarkBackgroundApp
+import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.theme.DarkBackgroundCard
-import com.example.thesimpsons.ui.theme.DarkText
 import com.example.thesimpsons.ui.theme.GreenApp
-import com.example.thesimpsons.ui.theme.LightBackgroundApp
 import com.example.thesimpsons.ui.theme.LightBackgroundCard
-import com.example.thesimpsons.ui.theme.LightText
 
 @Composable
-fun CharactersScreen(innerPadding: PaddingValues, viewModel: CharacterViewModel = hiltViewModel(), onNavigateToDetails:(Int) -> Unit) {
+fun CharactersScreen(
+    innerPadding: PaddingValues,
+    viewModel: CharacterViewModel = hiltViewModel(),
+    onNavigateToDetails: (Int) -> Unit,
+) {
 
     val characters = viewModel.characters.collectAsLazyPagingItems()
+    val query by viewModel.query.collectAsState()
 
-    when (characters.loadState.refresh) {
-        is LoadState.Loading -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+    ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp, top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Header(query, viewModel)
+            when (characters.loadState.refresh) {
+                is LoadState.Loading -> { CircularProgressIndicator() }
+                is LoadState.Error -> { Text("Error loading characters") }
+                is LoadState.NotLoading -> { CharacterList(characters) { onNavigateToDetails(it) } }
             }
         }
 
-        is LoadState.Error -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Error loading characters")
-            }
-        }
-
-        is LoadState.NotLoading -> {
-            ScreenContainer(innerPadding) {
-                CharacterList(characters) { onNavigateToDetails(it) }
-            }
-        }
     }
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick:(Int) -> Unit) {
+private fun Header(
+    query: String,
+    viewModel: CharacterViewModel,
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Image(painterResource(R.drawable.bart_ic), "", Modifier.size(80.dp))
+        Spacer(Modifier.size(4.dp))
+        TitleItem("Characters")
+        Spacer(Modifier.size(4.dp))
+        Image(painterResource(R.drawable.marge_ic), "", Modifier.size(80.dp))
+    }
+    QuerySearchItem(
+        query,
+        "Search character.."
+    ) { value -> viewModel.updateQuery(value) }
+}
+
+@Composable
+fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick: (Int) -> Unit) {
 
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -98,15 +122,14 @@ fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick:(Int
 }
 
 @Composable
-fun ItemList(character: CharacterDomain, onClick:() -> Unit) {
+fun ItemList(character: CharacterDomain, onClick: () -> Unit) {
 
     val backgroundCardColor = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
 
     Card(
         Modifier
             .size(200.dp)
-            .clickable { onClick() }
-        ,
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(16.dp),
         colors = CardDefaults.cardColors(

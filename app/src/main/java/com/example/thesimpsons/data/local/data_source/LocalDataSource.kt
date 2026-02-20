@@ -5,14 +5,12 @@ import com.example.thesimpsons.data.local.dao.EpisodeDao
 import com.example.thesimpsons.data.local.dao.LocationDao
 import com.example.thesimpsons.data.local.entity.CharacterEntity
 import com.example.thesimpsons.data.local.entity.EpisodeEntity
-import com.example.thesimpsons.data.local.entity.LocationEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(
     private val characterDao: CharacterDao,
     private val episodeDao: EpisodeDao,
-    private val locationDao: LocationDao
 ) {
 
     // Characters
@@ -23,16 +21,12 @@ class LocalDataSource @Inject constructor(
 
     fun getSingleCharacter(id: Int): Flow<CharacterEntity?> = characterDao.getSingleCharacter(id)
 
-    // Episodes
 
-    suspend fun episodeExists(id: Int): Boolean = episodeDao.exists(id)
+
+    // Episodes
 
     suspend fun addSingleEpisode(episodeEntity: EpisodeEntity) = episodeDao.addSingleEpisode(episodeEntity)
 
     fun getSingleEpisode(id:Int): Flow<EpisodeEntity?> = episodeDao.getSingleEpisode(id)
-
-    // Locations
-
-    suspend fun addLocations(locations:List<LocationEntity>) = locationDao.insertAll(locations)
 
 }
