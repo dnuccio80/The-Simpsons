@@ -1,5 +1,6 @@
 package com.example.thesimpsons.ui.core
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -7,9 +8,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -22,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -93,6 +97,32 @@ fun InfoTextItem(concept: String, description: String, whiteColor: Boolean = fal
 
     }
 
+}
+
+@Composable
+fun Header(
+    query: String,
+    queryPlaceHolder:String,
+    title:String,
+    leadingImage: Painter,
+    trailingImage: Painter,
+    onQueryChange:(String) -> Unit
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Image(leadingImage, "", Modifier.size(80.dp))
+        Spacer(Modifier.size(4.dp))
+        TitleItem(title)
+        Spacer(Modifier.size(4.dp))
+        Image(trailingImage, "", Modifier.size(80.dp))
+    }
+    QuerySearchItem(
+        query,
+        queryPlaceHolder
+    ) { value -> onQueryChange(value) }
 }
 
 @Composable

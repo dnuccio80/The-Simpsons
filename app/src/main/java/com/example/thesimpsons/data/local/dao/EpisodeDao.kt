@@ -29,4 +29,7 @@ interface EpisodeDao {
     @Query("SELECT EXISTS ( SELECT 1 FROM episodeentity WHERE id = :id)")
     suspend fun exists(id:Int):Boolean
 
+    @Query("""SELECT * FROM EpisodeEntity WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'""")
+    fun getPagingSourceSearch(query:String):PagingSource<Int,EpisodeEntity>
+
 }

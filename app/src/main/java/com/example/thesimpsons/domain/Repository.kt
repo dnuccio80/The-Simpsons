@@ -15,6 +15,10 @@ interface Repository {
 
     fun getAllEpisodes():Flow<PagingData<EpisodeDomain>>
 
+    fun getEpisodesByQuery(query:String):Flow<PagingData<EpisodeDomain>>
+
     fun getAllLocations():Flow<PagingData<LocationDomain>>
+
+    fun getLocationsByQuery(query:String):Flow<PagingData<LocationDomain>>
 
 }

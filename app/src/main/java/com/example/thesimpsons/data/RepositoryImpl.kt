@@ -98,6 +98,16 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getEpisodesByQuery(query: String): Flow<PagingData<EpisodeDomain>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { episodeDao.getPagingSourceSearch(query) }
+        ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
+    }
+
     override fun getAllLocations(): Flow<PagingData<LocationDomain>> {
         return Pager(
             config = PagingConfig(
@@ -109,6 +119,16 @@ class RepositoryImpl @Inject constructor(
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }
         }
+    }
+
+    override fun getLocationsByQuery(query: String): Flow<PagingData<LocationDomain>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { locationDao.pagingSourceSearch(query) }
+        ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
 

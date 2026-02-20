@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +41,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.thesimpsons.R
 import com.example.thesimpsons.domain.CharacterDomain
+import com.example.thesimpsons.ui.core.Header
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.QuerySearchItem
 import com.example.thesimpsons.ui.core.ScreenContainer
@@ -62,11 +64,18 @@ fun CharactersScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp, top = 16.dp),
+                .padding(top = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Header(query, viewModel)
+            Header(
+                query,
+                title = "Characters",
+                leadingImage = painterResource(R.drawable.bart_ic),
+                trailingImage = painterResource(R.drawable.marge_ic),
+                queryPlaceHolder = "Search Character..",
+                onQueryChange = { viewModel.updateQuery(it) }
+            )
             when (characters.loadState.refresh) {
                 is LoadState.Loading -> { CircularProgressIndicator() }
                 is LoadState.Error -> { Text("Error loading characters") }
@@ -78,30 +87,7 @@ fun CharactersScreen(
 }
 
 @Composable
-private fun Header(
-    query: String,
-    viewModel: CharacterViewModel,
-) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.Bottom
-    ) {
-        Image(painterResource(R.drawable.bart_ic), "", Modifier.size(80.dp))
-        Spacer(Modifier.size(4.dp))
-        TitleItem("Characters")
-        Spacer(Modifier.size(4.dp))
-        Image(painterResource(R.drawable.marge_ic), "", Modifier.size(80.dp))
-    }
-    QuerySearchItem(
-        query,
-        "Search character.."
-    ) { value -> viewModel.updateQuery(value) }
-}
-
-@Composable
 fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick: (Int) -> Unit) {
-
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),

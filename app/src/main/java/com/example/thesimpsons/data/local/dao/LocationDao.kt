@@ -19,4 +19,8 @@ interface LocationDao {
     @Query("DELETE FROM LocationEntity")
     suspend fun clearAll()
 
+    @Query("""SELECT * FROM locationentity WHERE LOWER(name) LIKE '%'  || LOWER(:query) || '%' ORDER BY name ASC """)
+    fun pagingSourceSearch(query:String):PagingSource<Int,LocationEntity>
+
+
 }

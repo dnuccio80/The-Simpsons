@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import com.example.thesimpsons.R
 import com.example.thesimpsons.domain.LocationDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
+import com.example.thesimpsons.ui.core.Header
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.QuerySearchItem
 import com.example.thesimpsons.ui.core.ScreenContainer
@@ -51,45 +52,38 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
     val locations = viewModel.locations.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsState()
 
-    when (locations.loadState.refresh) {
-        is LoadState.Error -> {
-            Text("Error getting locations")
-        }
+    ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Header(
+                query,
+                title = "Locations",
+                leadingImage = painterResource(R.drawable.lisa_ic),
+                trailingImage = painterResource(R.drawable.snake_ic),
+                queryPlaceHolder = "Search Location..",
+                onQueryChange = { viewModel.updateQuery(it) }
+            )
+            when (locations.loadState.refresh) {
+                is LoadState.Error -> {
+                    Text("Error getting locations")
+                }
 
-        LoadState.Loading -> {
-            Box(
-                Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
-        }
+                LoadState.Loading -> {
+                    CircularProgressIndicator()
+                }
 
-        is LoadState.NotLoading -> {
-            ScreenContainer(innerPadding) {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 4.dp, end = 4.dp, top = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Image(painterResource(R.drawable.bart_ic), "", Modifier.size(60.dp))
-                        Spacer(Modifier.size(4.dp))
-                        TitleItem("Characters")
-                        Spacer(Modifier.size(4.dp))
-                        Image(painterResource(R.drawable.marge_ic), "", Modifier.size(60.dp))
-                    }
-                    QuerySearchItem(query, "Search location..") { value -> viewModel.updateQuery(value) }
+                is LoadState.NotLoading -> {
                     LazyList(locations)
                 }
             }
         }
-    }
 
+    }
 }
 
 @Composable
