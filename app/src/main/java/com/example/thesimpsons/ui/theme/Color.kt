@@ -1,6 +1,5 @@
 package com.example.thesimpsons.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -13,6 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 
 val GreenApp = Color(0xFF1E720E)
+val YellowMain = Color(0xFFFDDD00)
+val YellowSecondary = Color(0xFF52480B)
 
 // Dark Mode
 val DarkBackgroundApp = Color(0xFF000000)

@@ -41,7 +41,6 @@ import com.example.thesimpsons.ui.core.InfoTextItem
 import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.core.SubtitleItem
 import com.example.thesimpsons.ui.core.TitleItem
-import com.example.thesimpsons.ui.screens.home.UiState
 import com.example.thesimpsons.ui.theme.DarkBackgroundCard
 import com.example.thesimpsons.ui.theme.DarkText
 import com.example.thesimpsons.ui.theme.GreenApp
@@ -188,4 +187,10 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
     }
 
 
+}
+
+sealed class UiState {
+    data class Success(val character: CharacterDomain):UiState()
+    data class Error(val error:Throwable):UiState()
+    data object Loading:UiState()
 }

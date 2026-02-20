@@ -15,8 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -35,6 +38,7 @@ import com.example.thesimpsons.ui.theme.DarkBackgroundApp
 import com.example.thesimpsons.ui.theme.DarkText
 import com.example.thesimpsons.ui.theme.LightBackgroundApp
 import com.example.thesimpsons.ui.theme.LightText
+import com.example.thesimpsons.ui.theme.YellowMain
 
 @Composable
 fun TitleItem(text: String, whiteColor: Boolean = false) {
@@ -62,6 +66,17 @@ fun SubtitleItem(text: String, whiteColor: Boolean = false, modifier: Modifier =
         fontSize = 18.sp,
         color = if (whiteColor) Color.White else color,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun ButtonContentText(text: String, color: Color = Color.White, modifier: Modifier = Modifier) {
+    Text(
+        text,
+        modifier = modifier,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 18.sp,
+        color = color
     )
 }
 
@@ -123,6 +138,24 @@ fun Header(
         query,
         queryPlaceHolder
     ) { value -> onQueryChange(value) }
+}
+
+@Composable
+fun ButtonTextItem(text: String, contentColor:Color = Color.White, onClick: () -> Unit) {
+    Button(
+        onClick = { onClick() },
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = YellowMain
+        ),
+        contentPadding = PaddingValues(horizontal = 16.dp)
+
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            ButtonContentText(text, contentColor)
+            Icon(Icons.AutoMirrored.Default.ArrowForward, "", tint = contentColor)
+        }
+    }
 }
 
 @Composable
