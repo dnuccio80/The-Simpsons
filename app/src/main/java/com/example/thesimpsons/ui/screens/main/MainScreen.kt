@@ -5,7 +5,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,6 +32,7 @@ fun MainScreen() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val rootDestination = Routes.Characters.route
 
     val showBottomBar = currentRoute in bottomBarDestinations
 
@@ -44,7 +44,7 @@ fun MainScreen() {
             )
             {
                 navController.navigate(it) {
-                    popUpTo(navController.graph.findStartDestination().id) {
+                    popUpTo(rootDestination) {
                         saveState = true
                     }
                     launchSingleTop = true
@@ -54,13 +54,19 @@ fun MainScreen() {
         }) { innerPadding ->
 
         NavHost(navController, startDestination = Routes.OnBoarding.route) {
-            composable(Routes.OnBoarding.route) { OnBoardingScreen(innerPadding) }
+            composable(Routes.OnBoarding.route) { OnBoardingScreen(innerPadding) {
+                navController.navigate(Routes.Characters.route) {
+                    popUpTo(Routes.OnBoarding.route) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            } }
             composable(Routes.Characters.route) {
                 CharactersScreen(innerPadding) {
                     navController.navigate(Routes.CharacterDetails.createRoute(it)) {
                         restoreState = true
                         launchSingleTop = true
-
                     }
                 }
             }
