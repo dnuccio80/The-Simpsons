@@ -49,8 +49,8 @@ import com.example.thesimpsons.ui.theme.LightText
 
 @Composable
 fun CharacterDetailsScreen(
-    innerPadding: PaddingValues,
     characterId: Int,
+    innerPadding: PaddingValues,
     viewModel: CharacterDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
 ) {

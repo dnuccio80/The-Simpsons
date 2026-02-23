@@ -7,12 +7,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation3.runtime.NavKey
 import com.example.thesimpsons.ui.navigation.NavigationItem
 
 @Composable
 fun BottomBar(
-    currentRoute:String?,
-    onClick:(String) -> Unit,
+    currentRoute:NavKey,
+    onClick:(NavKey) -> Unit,
 ) {
 
     val navBarItems = listOf(
