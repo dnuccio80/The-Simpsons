@@ -1,7 +1,14 @@
 package com.example.thesimpsons.ui.navigation
 
-sealed class OnBoardingRoutes(val route:String) {
-    data object Welcome:OnBoardingRoutes("welcome")
-    data object DefineVisualMode:OnBoardingRoutes("defineVisualMode")
-    data object EnterName:OnBoardingRoutes("enterName")
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+sealed class OnBoardingRoutes: NavKey {
+    @Serializable
+    data object Welcome:OnBoardingRoutes()
+    @Serializable
+    data object DefineVisualMode:OnBoardingRoutes()
+    @Serializable
+    data object EnterName:OnBoardingRoutes()
 }
+

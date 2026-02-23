@@ -8,15 +8,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.thesimpsons.ui.core.BottomBar
 import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.backTo
+import com.example.thesimpsons.ui.core.extensions.clearAndNavigateTo
 import com.example.thesimpsons.ui.core.extensions.navigateTo
-import com.example.thesimpsons.ui.navigation.NavRoutes.*
+import com.example.thesimpsons.ui.navigation.NavRoutes.CharacterDetails
+import com.example.thesimpsons.ui.navigation.NavRoutes.Characters
+import com.example.thesimpsons.ui.navigation.NavRoutes.EpisodeDetails
+import com.example.thesimpsons.ui.navigation.NavRoutes.Episodes
+import com.example.thesimpsons.ui.navigation.NavRoutes.Location
+import com.example.thesimpsons.ui.navigation.NavRoutes.OnBoarding
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.episodedetails.EpisodeDetailsScreen
@@ -33,7 +38,7 @@ fun MainScreen() {
         Location
     )
 
-    val backStack = rememberNavBackStack(Characters)
+        val backStack = rememberNavBackStack(OnBoarding)
     val showBottomBar = backStack.last() in bottomBarDestinations
     val currentRoute = backStack.last()
 
@@ -52,7 +57,7 @@ fun MainScreen() {
             backStack = backStack,
             onBack = { backStack.back() },
             entryProvider = entryProvider {
-                entry<OnBoarding> { OnBoardingScreen(innerPadding) { } }
+                entry<OnBoarding> { OnBoardingScreen(innerPadding) { backStack.clearAndNavigateTo(Characters) } }
                 entry<Characters> { CharactersScreen(innerPadding) { backStack.navigateTo(CharacterDetails(it)) } }
                 entry<CharacterDetails> { key -> CharacterDetailsScreen(key.id, innerPadding) { backStack.back() } }
                 entry<Episodes> { EpisodesScreen(innerPadding) { backStack.navigateTo(EpisodeDetails(it)) } }
@@ -78,60 +83,5 @@ fun MainScreen() {
                 )
             }
         )
-
-//        NavHost(navController, startDestination = Routes.OnBoarding.route) {
-//            composable(Routes.OnBoarding.route) { OnBoardingScreen(innerPadding) {
-//                navController.navigate(Routes.Characters.route) {
-//                    popUpTo(Routes.OnBoarding.route) {
-//                        inclusive = true
-//                    }
-//                    launchSingleTop = true
-//                }
-//            } }
-//            composable(Routes.Characters.route) {
-//                CharactersScreen(innerPadding) {
-//                    navController.navigate(Routes.CharacterDetails.createRoute(it)) {
-//                        restoreState = true
-//                        launchSingleTop = true
-//                    }
-//                }
-//            }
-//            composable(
-//                Routes.CharacterDetails.route, arguments = listOf(
-//                    navArgument("id") {
-//                        type = NavType.IntType
-//                    }
-//                )) { navBackStackEntry ->
-//                CharacterDetailsScreen(
-//                    innerPadding,
-//                    navBackStackEntry.arguments?.getInt("id") ?: 0
-//                ) {
-//                    if (navController.previousBackStackEntry != null) {
-//                        navController.popBackStack()
-//                    }
-//                }
-//            }
-//            composable(Routes.Episodes.route) {
-//                EpisodesScreen(innerPadding) {
-//                    navController.navigate(
-//                        Routes.EpisodeDetails.createRoute(it)
-//                    )
-//                }
-//            }
-//            composable(
-//                Routes.EpisodeDetails.route, arguments = listOf(
-//                    navArgument("id") {
-//                        type = NavType.IntType
-//                    }
-//                )) { navBackStackEntry ->
-//                EpisodeDetailsScreen(
-//                    id = navBackStackEntry.arguments?.getInt("id") ?: 0,
-//                    innerPadding = innerPadding
-//                ) {
-//                    if (navController.previousBackStackEntry != null) navController.popBackStack()
-//                }
-//            }
-//            composable(Routes.Location.route) { LocationScreen(innerPadding) }
-//        }
     }
 }

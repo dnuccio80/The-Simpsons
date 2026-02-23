@@ -1,6 +1,10 @@
 package com.example.thesimpsons.ui.screens.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,22 +40,29 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.ButtonTextItem
 import com.example.thesimpsons.ui.core.SubtitleItem
 import com.example.thesimpsons.ui.core.TitleItem
+import com.example.thesimpsons.ui.core.extensions.back
+import com.example.thesimpsons.ui.core.extensions.navigateTo
 import com.example.thesimpsons.ui.navigation.OnBoardingRoutes
+import com.example.thesimpsons.ui.navigation.OnBoardingRoutes.*
 import com.example.thesimpsons.ui.theme.DarkBackgroundApp
 import com.example.thesimpsons.ui.theme.LightBackgroundApp
 import com.example.thesimpsons.ui.theme.YellowMain
 import com.example.thesimpsons.ui.theme.YellowSecondary
 
 @Composable
-fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp:() -> Unit) {
+fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp: () -> Unit) {
 
     val backgroundApp = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
-    val boardingNavController = rememberNavController()
+
+    val backStack = rememberNavBackStack(Welcome)
 
     Box(
         modifier = Modifier
@@ -60,26 +71,33 @@ fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp:() -> Unit) {
             .background(backgroundApp),
         contentAlignment = Alignment.Center
     ) {
-        NavHost(
-            navController = boardingNavController,
-            startDestination = OnBoardingRoutes.Welcome.route
-        ) {
-            composable(OnBoardingRoutes.Welcome.route) {
-                Welcome {
-                    boardingNavController.navigate(
-                        OnBoardingRoutes.DefineVisualMode.route
-                    )
-                }
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.back() },
+            entryProvider = entryProvider {
+                entry<Welcome> { Welcome { backStack.navigateTo(DefineVisualMode) } }
+                entry<DefineVisualMode> { DefineVisualMode { backStack.navigateTo(EnterName) } }
+                entry<EnterName> { EnterName { onNavigateToApp() } }
+            },
+            transitionSpec = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(300)
+                ) togetherWith slideOutHorizontally(
+                    targetOffsetX = { -it },
+                    animationSpec = tween(300)
+                )
+            },
+            popTransitionSpec = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(300)
+                ) togetherWith slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = tween(300)
+                )
             }
-            composable(OnBoardingRoutes.DefineVisualMode.route) {
-                DefineVisualMode {
-                    boardingNavController.navigate(
-                        OnBoardingRoutes.EnterName.route
-                    )
-                }
-            }
-            composable(OnBoardingRoutes.EnterName.route) { EnterName { onNavigateToApp() } }
-        }
+        )
     }
 
 }
@@ -139,13 +157,13 @@ fun EnterName(onNextClick: () -> Unit) {
 @Composable
 fun GenericTextField(
     query: String,
-    placeholder:String,
-    onUpdate: (String) -> Unit
+    placeholder: String,
+    onUpdate: (String) -> Unit,
 ) {
     TextField(
         value = query,
         onValueChange = {
-            val newValue = if(it.isNotBlank()) {
+            val newValue = if (it.isNotBlank()) {
                 it.replaceFirstChar { char -> char.titlecase() }
             } else it
             onUpdate(newValue)
