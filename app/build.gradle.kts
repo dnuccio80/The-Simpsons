@@ -67,6 +67,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.games.activity)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.paging)
 
@@ -92,6 +93,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Data Store
+    implementation(libs.androidx.datastore.preferences)
 
     // Firebase
 

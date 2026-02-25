@@ -2,7 +2,6 @@ package com.example.thesimpsons.ui.screens.characterdetails
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +31,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.thesimpsons.domain.CharacterDomain
+import com.example.thesimpsons.domain.data_classes.CharacterDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.InfoTextItem
@@ -55,10 +54,10 @@ fun CharacterDetailsScreen(
     onBackClick: () -> Unit,
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.getCharacterDetails(characterId)
+    LaunchedEffect(characterId) {
+        viewModel.setCharacterId(characterId)
     }
 
     when (uiState) {
@@ -75,17 +74,17 @@ fun CharacterDetailsScreen(
         }
 
         is UiState.Success -> {
-            Details((uiState as UiState.Success).character, innerPadding) { onBackClick() }
+            Details((uiState as UiState.Success).character, innerPadding, darkMode = (uiState as UiState.Success).darkMode) { onBackClick() }
         }
     }
 }
 
 @Composable
-fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick: () -> Unit) {
+fun Details(character: CharacterDomain, innerPadding: PaddingValues, darkMode:Boolean, onBackClick: () -> Unit) {
 
-    val backgroundCard = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
+    val backgroundCard = if (darkMode) DarkBackgroundCard else LightBackgroundCard
     val borderImageColor = if (character.isAlive) GreenApp else Color.Red
-    val textColor = if (isSystemInDarkTheme()) DarkText else LightText
+    val textColor = if (darkMode) DarkText else LightText
     val aliveText = "ALIVE"
     val deadText = "DEAD"
 
@@ -137,6 +136,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
             }
             TitleItem(
                 text = character.name,
+                darkMode
             )
             Box(
                 modifier = Modifier
@@ -165,7 +165,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
                         InfoTextItem("Occupation:", character.occupation)
                         if (character.phrases.isNotEmpty()) {
                             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                                SubtitleItem("Iconic phrases")
+                                SubtitleItem("Iconic phrases", darkMode)
                             }
                         }
                         character.phrases.forEach {
@@ -190,7 +190,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, onBackClick
 }
 
 sealed class UiState {
-    data class Success(val character: CharacterDomain):UiState()
+    data class Success(val character: CharacterDomain, val darkMode: Boolean):UiState()
     data class Error(val error:Throwable):UiState()
     data object Loading:UiState()
 }

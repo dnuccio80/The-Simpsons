@@ -1,4 +1,4 @@
-package com.example.thesimpsons.data
+package com.example.thesimpsons.data.impl
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -13,10 +13,10 @@ import com.example.thesimpsons.data.network.data_source.NetworkDataSource
 import com.example.thesimpsons.data.network_mediator.CharacterNetworkMediator
 import com.example.thesimpsons.data.network_mediator.EpisodeNetworkMediator
 import com.example.thesimpsons.data.network_mediator.LocationNetworkMediator
-import com.example.thesimpsons.domain.CharacterDomain
-import com.example.thesimpsons.domain.EpisodeDomain
-import com.example.thesimpsons.domain.LocationDomain
-import com.example.thesimpsons.domain.Repository
+import com.example.thesimpsons.domain.data_classes.CharacterDomain
+import com.example.thesimpsons.domain.data_classes.EpisodeDomain
+import com.example.thesimpsons.domain.data_classes.LocationDomain
+import com.example.thesimpsons.domain.repository.DataRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class RepositoryImpl @Inject constructor(
+class DataRepositoryImpl @Inject constructor(
     private val network: NetworkDataSource,
     private val local: LocalDataSource,
     private val characterMediator: CharacterNetworkMediator,
@@ -33,7 +33,7 @@ class RepositoryImpl @Inject constructor(
     private val episodeDao:EpisodeDao,
     private val locationDao: LocationDao,
     private val locationMediator: LocationNetworkMediator
-) : Repository {
+) : DataRepository {
 
     companion object {
         const val ITEMS_PER_PAGE = 20

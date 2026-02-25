@@ -1,7 +1,6 @@
 package com.example.thesimpsons.ui.screens.episodedetails
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,15 +17,15 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.thesimpsons.domain.EpisodeDomain
+import com.example.thesimpsons.domain.data_classes.EpisodeDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.InfoTextItem
@@ -44,34 +43,39 @@ fun EpisodeDetailsScreen(
     onBackClick: () -> Unit,
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getEpisodeInfo(id)
+        viewModel.setEpisodeId(id)
     }
 
-    ScreenContainer(innerPadding) {
-        when (uiState) {
-            is EpisodeUiState.Error -> {
-                BodyTextItem("Error: ${(uiState as EpisodeUiState.Error).error}")
-            }
+    when (uiState) {
+        is EpisodeUiState.Error -> {
+            BodyTextItem("Error: ${(uiState as EpisodeUiState.Error).error}")
+        }
 
-            EpisodeUiState.Loading -> {
-                CircularProgressIndicator()
-            }
+        EpisodeUiState.Loading -> {
+            CircularProgressIndicator()
+        }
 
-            is EpisodeUiState.Success -> {
-                EpisodeInformation((uiState as EpisodeUiState.Success).episode) { onBackClick() }
+        is EpisodeUiState.Success -> {
+            ScreenContainer(innerPadding) {
+                EpisodeInformation((uiState as EpisodeUiState.Success).episode, (uiState as EpisodeUiState.Success).darkMode) { onBackClick() }
             }
         }
     }
 }
 
 @Composable
-fun EpisodeInformation(episode: EpisodeDomain, onBackClick: () -> Unit) {
+fun EpisodeInformation(episode: EpisodeDomain, darkMode:Boolean, onBackClick: () -> Unit) {
 
-    val textColor = if (isSystemInDarkTheme()) DarkText else LightText
-    Column(Modifier.fillMaxSize().padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    val textColor = if (darkMode) DarkText else LightText
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
             Icon(
                 Icons.AutoMirrored.Default.ArrowBack,
@@ -96,8 +100,8 @@ fun EpisodeInformation(episode: EpisodeDomain, onBackClick: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TitleItem(episode.name)
-                SubtitleItem("Information")
+                TitleItem(episode.name, darkMode)
+                SubtitleItem("Information", darkMode)
             }
         }
         Column(
@@ -112,7 +116,7 @@ fun EpisodeInformation(episode: EpisodeDomain, onBackClick: () -> Unit) {
             InfoTextItem("Episode number:", episode.episodeNumber)
             if (episode.synopsis.isNotBlank()) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    SubtitleItem("Synopsis")
+                    SubtitleItem("Synopsis", darkMode)
                 }
                 BodyTextItem(episode.synopsis)
             }

@@ -1,6 +1,4 @@
-package com.example.thesimpsons.domain
-
-import com.google.gson.annotations.SerializedName
+package com.example.thesimpsons.domain.data_classes
 
 data class CharacterDomain(
     val id: Int,

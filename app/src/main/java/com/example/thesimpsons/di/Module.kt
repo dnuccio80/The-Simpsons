@@ -1,15 +1,25 @@
 package com.example.thesimpsons.di
 
 import android.app.Application
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.example.thesimpsons.data.local.db.AppDataBase
+import com.example.thesimpsons.data.impl.DataRepositoryImpl
+import com.example.thesimpsons.data.impl.UserPreferencesRepositoryImpl
 import com.example.thesimpsons.data.local.dao.CharacterDao
 import com.example.thesimpsons.data.local.dao.EpisodeDao
 import com.example.thesimpsons.data.local.dao.LocationDao
+import com.example.thesimpsons.data.local.db.AppDataBase
 import com.example.thesimpsons.data.network.ApiClient
+import com.example.thesimpsons.domain.repository.DataRepository
+import com.example.thesimpsons.domain.repository.UserPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,9 +29,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object Module {
 
+    private const val DATASTORE_NAME = "app_preferences"
+
     @Provides
     @Singleton
-    fun provideRetrofit():Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://thesimpsonsapi.com/api/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -30,7 +42,7 @@ object Module {
 
     @Provides
     @Singleton
-    fun provideApiClient(retrofit: Retrofit):ApiClient {
+    fun provideApiClient(retrofit: Retrofit): ApiClient {
         return retrofit.create(ApiClient::class.java)
     }
 
@@ -64,5 +76,20 @@ object Module {
         return appDatabase.locationDao
     }
 
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(DATASTORE_NAME)
+        }
+    }
 
+    @Singleton
+    @Provides
+    fun provideUserPreferencesRepository(impl: UserPreferencesRepositoryImpl): UserPreferencesRepository =
+        impl
+
+    @Singleton
+    @Provides
+    fun provideDataRepository(impl:DataRepositoryImpl): DataRepository = impl
 }

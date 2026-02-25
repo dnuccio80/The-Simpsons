@@ -1,4 +1,4 @@
-package com.example.thesimpsons.domain
+package com.example.thesimpsons.domain.data_classes
 
 data class EpisodeDomain(
     val id: Int,

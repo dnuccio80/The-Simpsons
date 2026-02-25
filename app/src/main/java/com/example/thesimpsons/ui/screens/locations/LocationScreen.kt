@@ -1,19 +1,13 @@
 package com.example.thesimpsons.ui.screens.locations
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,19 +25,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.thesimpsons.R
-import com.example.thesimpsons.domain.LocationDomain
+import com.example.thesimpsons.domain.data_classes.LocationDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.Header
 import com.example.thesimpsons.ui.core.Images
-import com.example.thesimpsons.ui.core.QuerySearchItem
 import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.core.SubtitleItem
-import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.theme.Purple40
 
 @Composable
@@ -51,6 +44,7 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
 
     val locations = viewModel.locations.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsState()
+    val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
 
     ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
         Column(
@@ -78,7 +72,7 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
                 }
 
                 is LoadState.NotLoading -> {
-                    LazyList(locations)
+                    LazyList(locations, darkMode)
                 }
             }
         }
@@ -87,7 +81,7 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
 }
 
 @Composable
-fun LazyList(locations: LazyPagingItems<LocationDomain>) {
+fun LazyList(locations: LazyPagingItems<LocationDomain>, darkMode:Boolean) {
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

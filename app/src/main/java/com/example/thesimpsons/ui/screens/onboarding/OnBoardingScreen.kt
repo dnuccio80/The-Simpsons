@@ -8,7 +8,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,9 +36,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -50,19 +48,25 @@ import com.example.thesimpsons.ui.core.SubtitleItem
 import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.navigateTo
-import com.example.thesimpsons.ui.navigation.OnBoardingRoutes
-import com.example.thesimpsons.ui.navigation.OnBoardingRoutes.*
+import com.example.thesimpsons.ui.navigation.OnBoardingRoutes.DefineVisualMode
+import com.example.thesimpsons.ui.navigation.OnBoardingRoutes.EnterName
+import com.example.thesimpsons.ui.navigation.OnBoardingRoutes.Welcome
 import com.example.thesimpsons.ui.theme.DarkBackgroundApp
 import com.example.thesimpsons.ui.theme.LightBackgroundApp
 import com.example.thesimpsons.ui.theme.YellowMain
 import com.example.thesimpsons.ui.theme.YellowSecondary
 
 @Composable
-fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp: () -> Unit) {
+fun OnBoardingScreen(
+    innerPadding: PaddingValues,
+    viewModel: OnBoardingViewModel = hiltViewModel(),
+    onNavigateToApp: () -> Unit,
+) {
 
-    val backgroundApp = if (isSystemInDarkTheme()) DarkBackgroundApp else LightBackgroundApp
-
+    val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
     val backStack = rememberNavBackStack(Welcome)
+
+    val backgroundApp = if (darkMode) DarkBackgroundApp else LightBackgroundApp
 
     Box(
         modifier = Modifier
@@ -75,9 +79,21 @@ fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp: () -> Unit) {
             backStack = backStack,
             onBack = { backStack.back() },
             entryProvider = entryProvider {
-                entry<Welcome> { Welcome { backStack.navigateTo(DefineVisualMode) } }
-                entry<DefineVisualMode> { DefineVisualMode { backStack.navigateTo(EnterName) } }
-                entry<EnterName> { EnterName { onNavigateToApp() } }
+                entry<Welcome> { Welcome(darkMode) { backStack.navigateTo(DefineVisualMode) } }
+                entry<DefineVisualMode> {
+                    DefineVisualMode(
+                        onNextClick = { backStack.navigateTo(EnterName) },
+                        onChangeMode = { newVisualMode ->
+                            viewModel.setMode(newVisualMode == VisualMode.DARK)
+                        }
+                    )
+                }
+                entry<EnterName> {
+                    EnterName { username ->
+                        viewModel.setUserPreferences(username)
+                        onNavigateToApp()
+                    }
+                }
             },
             transitionSpec = {
                 slideInHorizontally(
@@ -103,32 +119,32 @@ fun OnBoardingScreen(innerPadding: PaddingValues, onNavigateToApp: () -> Unit) {
 }
 
 @Composable
-fun Welcome(onNextClick: () -> Unit) {
+fun Welcome(darkMode:Boolean, onNextClick: () -> Unit) {
     OnBoardingBody(
         painterResource(R.drawable.family_friendly),
         buttonText = "Next",
         content = {
-            TitleItem("Welcome to")
+            TitleItem("Welcome to", darkMode)
             Image(painterResource(R.drawable.logo), contentDescription = "")
-            TitleItem("API")
+            TitleItem("API", darkMode)
         }
     ) { onNextClick() }
 }
 
 @Composable
-fun DefineVisualMode(onNextClick: () -> Unit) {
+fun DefineVisualMode(onNextClick: () -> Unit, onChangeMode: (VisualMode) -> Unit) {
     OnBoardingBody(
         image = painterResource(R.drawable.family),
         buttonText = "Next",
         content = {
             SubtitleItem("Let´s define your favorite mode")
-            VisualModeRadioButtonsContainer()
+            VisualModeRadioButtonsContainer { newVisualMode -> onChangeMode(newVisualMode) }
         }
     ) { onNextClick() }
 }
 
 @Composable
-fun EnterName(onNextClick: () -> Unit) {
+fun EnterName(onNextClick: (String) -> Unit) {
 
     var name by rememberSaveable { mutableStateOf("") }
     var showError by rememberSaveable { mutableStateOf(false) }
@@ -149,7 +165,7 @@ fun EnterName(onNextClick: () -> Unit) {
             }
         }
     ) {
-        if (name.isNotBlank()) onNextClick()
+        if (name.isNotBlank()) onNextClick(name)
         else showError = true
     }
 }
@@ -217,43 +233,50 @@ private fun OnBoardingBody(
     }
 }
 
+enum class VisualMode(val mode: String) {
+    LIGHT("Light Mode"), DARK("Dark Mode")
+}
+
 @Composable
-fun VisualModeRadioButtonsContainer() {
+fun VisualModeRadioButtonsContainer(onChangeMode: (VisualMode) -> Unit) {
 
     val radioItems = listOf(
-        "Dark Mode",
-        "Light Mode",
+        VisualMode.LIGHT,
+        VisualMode.DARK,
     )
 
-    var selected by rememberSaveable { mutableStateOf(radioItems.first()) }
+    var selected by rememberSaveable { mutableStateOf(radioItems.first().mode) }
 
     Column(
         Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        radioItems.forEach {
-            RadioButtonItem(it, selected) { newValue -> selected = newValue }
+        radioItems.forEach { visualMode ->
+            RadioButtonItem(visualMode, selected) { newMode ->
+                selected = newMode.mode
+                onChangeMode(newMode)
+            }
         }
     }
 }
 
 @Composable
-fun RadioButtonItem(text: String, selected: String, onClick: (String) -> Unit) {
+fun RadioButtonItem(mode: VisualMode, selected: String, onClick: (VisualMode) -> Unit) {
     Row(
         Modifier
-            .clickable { onClick(text) },
+            .clickable { onClick(mode) },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
-            selected = selected == text,
+            selected = selected == mode.mode,
             onClick = { },
             colors = RadioButtonDefaults.colors(
                 selectedColor = YellowMain,
                 unselectedColor = YellowSecondary
             )
         )
-        BodyTextItem(text)
+        BodyTextItem(mode.mode)
     }
 }

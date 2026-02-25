@@ -2,7 +2,7 @@ package com.example.thesimpsons.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.thesimpsons.domain.EpisodeDomain
+import com.example.thesimpsons.domain.data_classes.EpisodeDomain
 
 @Entity
 data class EpisodeEntity(
@@ -16,7 +16,7 @@ data class EpisodeEntity(
     val page:Int,
     val synopsis: String,
 ) {
-    fun toDomain():EpisodeDomain = EpisodeDomain(
+    fun toDomain(): EpisodeDomain = EpisodeDomain(
         id = id,
         airDate = airDate.ifBlank { "Unknown" },
         episodeNumber = episodeNumber.ifBlank { "Unknown" },

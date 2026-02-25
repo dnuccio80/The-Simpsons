@@ -2,7 +2,6 @@ package com.example.thesimpsons.ui.screens.characters
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,12 +29,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.thesimpsons.R
-import com.example.thesimpsons.domain.CharacterDomain
+import com.example.thesimpsons.domain.data_classes.CharacterDomain
 import com.example.thesimpsons.ui.core.Header
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.ScreenContainer
@@ -52,9 +51,10 @@ fun CharactersScreen(
 ) {
 
     val characters = viewModel.characters.collectAsLazyPagingItems()
-    val query by viewModel.query.collectAsState()
+    val query by viewModel.query.collectAsStateWithLifecycle()
+    val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
 
-    ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
+    ScreenContainer(innerPadding,alignment = Alignment.TopCenter) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -67,13 +67,21 @@ fun CharactersScreen(
                 title = "Characters",
                 leadingImage = painterResource(R.drawable.bart_ic),
                 trailingImage = painterResource(R.drawable.marge_ic),
-                queryPlaceHolder = "Search Character..",
+                queryPlaceHolder = "Search character..",
                 onQueryChange = { viewModel.updateQuery(it) }
             )
             when (characters.loadState.refresh) {
-                is LoadState.Loading -> { CircularProgressIndicator() }
-                is LoadState.Error -> { Text("Error loading characters") }
-                is LoadState.NotLoading -> { CharacterList(characters) { onNavigateToDetails(it) } }
+                is LoadState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is LoadState.Error -> {
+                    Text("Error loading characters")
+                }
+
+                is LoadState.NotLoading -> {
+                    CharacterList(characters, darkMode) { onNavigateToDetails(it) }
+                }
             }
         }
 
@@ -81,7 +89,7 @@ fun CharactersScreen(
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick: (Int) -> Unit) {
+fun CharacterList(characters: LazyPagingItems<CharacterDomain>, darkMode: Boolean, onItemClick: (Int) -> Unit) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
@@ -94,17 +102,17 @@ fun CharacterList(characters: LazyPagingItems<CharacterDomain>, onItemClick: (In
             characters.itemCount,
             key = { index -> characters[index]?.id ?: index }
         ) { index ->
-            characters[index]?.let {
-                ItemList(it) { onItemClick(it.id) }
+            characters[index]?.let { character ->
+                ItemList(character, darkMode) { onItemClick(character.id) }
             }
         }
     }
 }
 
 @Composable
-fun ItemList(character: CharacterDomain, onClick: () -> Unit) {
+fun ItemList(character: CharacterDomain, darkMode: Boolean, onClick: () -> Unit) {
 
-    val backgroundCardColor = if (isSystemInDarkTheme()) DarkBackgroundCard else LightBackgroundCard
+    val backgroundCardColor = if (darkMode) DarkBackgroundCard else LightBackgroundCard
 
     Card(
         Modifier

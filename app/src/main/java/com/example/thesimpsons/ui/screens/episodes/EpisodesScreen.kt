@@ -27,12 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.thesimpsons.R
-import com.example.thesimpsons.domain.EpisodeDomain
+import com.example.thesimpsons.domain.data_classes.EpisodeDomain
 import com.example.thesimpsons.ui.core.Header
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.ScreenContainer

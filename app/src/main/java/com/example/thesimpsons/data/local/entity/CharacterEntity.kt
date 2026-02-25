@@ -2,7 +2,7 @@ package com.example.thesimpsons.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.thesimpsons.domain.CharacterDomain
+import com.example.thesimpsons.domain.data_classes.CharacterDomain
 
 @Entity
 data class CharacterEntity(
@@ -18,7 +18,7 @@ data class CharacterEntity(
     val status: String,
     val page:Int
 ) {
-    fun toDomain():CharacterDomain = CharacterDomain(
+    fun toDomain(): CharacterDomain = CharacterDomain(
         id = id,
         age = age,
         birthdate = birthdate,
