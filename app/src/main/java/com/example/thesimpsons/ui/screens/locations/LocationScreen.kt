@@ -44,13 +44,11 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
 
     val locations = viewModel.locations.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsState()
-    val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
 
     ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
         Column(
             Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -72,7 +70,7 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
                 }
 
                 is LoadState.NotLoading -> {
-                    LazyList(locations, darkMode)
+                    LazyList(locations)
                 }
             }
         }
@@ -81,7 +79,7 @@ fun LocationScreen(innerPadding: PaddingValues, viewModel: LocationViewModel = h
 }
 
 @Composable
-fun LazyList(locations: LazyPagingItems<LocationDomain>, darkMode:Boolean) {
+fun LazyList(locations: LazyPagingItems<LocationDomain>) {
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

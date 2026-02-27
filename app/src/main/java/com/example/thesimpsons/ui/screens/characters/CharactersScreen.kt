@@ -57,8 +57,7 @@ fun CharactersScreen(
     ScreenContainer(innerPadding,alignment = Alignment.TopCenter) {
         Column(
             Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {

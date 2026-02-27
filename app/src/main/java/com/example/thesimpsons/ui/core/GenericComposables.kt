@@ -181,11 +181,9 @@ fun QuerySearchItem(
 @Composable
 fun ScreenContainer(
     innerPadding: PaddingValues,
-//    darkMode: Boolean,
     alignment: Alignment = Alignment.Center,
     content: @Composable () -> Unit,
 ) {
-//    val backgroundScreen = if (darkMode) DarkBackgroundApp else LightBackgroundApp
     Box(
         Modifier
             .fillMaxSize()

@@ -100,7 +100,7 @@ fun Details(character: CharacterDomain, innerPadding: PaddingValues, darkMode:Bo
                     contentDescription = "back button",
                     tint = textColor,
                     modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp)
+                        .padding(horizontal = 16.dp)
                         .clickable {
                             onBackClick()
                         })
