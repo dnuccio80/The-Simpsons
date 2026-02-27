@@ -46,14 +46,15 @@ fun TitleItem(text: String, whiteColor: Boolean = false) {
 }
 
 @Composable
-fun SubtitleItem(text: String, whiteColor: Boolean = false, modifier: Modifier = Modifier) {
+fun SubtitleItem(text: String, whiteColor: Boolean = false, singleLine:Boolean = false, modifier: Modifier = Modifier) {
     Text(
         text,
         modifier = modifier,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
         color = if (whiteColor) Color.White else Color.Unspecified,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        maxLines = if(singleLine) 1 else Int.MAX_VALUE
     )
 }
 

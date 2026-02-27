@@ -17,17 +17,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -37,23 +41,22 @@ import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.backTo
 import com.example.thesimpsons.ui.core.extensions.clearAndNavigateTo
 import com.example.thesimpsons.ui.core.extensions.navigateTo
-import com.example.thesimpsons.ui.navigation.NavRoutes.CharacterDetails
-import com.example.thesimpsons.ui.navigation.NavRoutes.Characters
-import com.example.thesimpsons.ui.navigation.NavRoutes.EpisodeDetails
-import com.example.thesimpsons.ui.navigation.NavRoutes.Episodes
-import com.example.thesimpsons.ui.navigation.NavRoutes.Location
-import com.example.thesimpsons.ui.navigation.NavRoutes.OnBoarding
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.episodedetails.EpisodeDetailsScreen
 import com.example.thesimpsons.ui.screens.episodes.EpisodesScreen
 import com.example.thesimpsons.ui.screens.locations.LocationScreen
+import com.example.thesimpsons.ui.navigation.ModalDrawerItem
+import com.example.thesimpsons.ui.navigation.NavRoutes
+import com.example.thesimpsons.ui.navigation.NavRoutes.*
 import com.example.thesimpsons.ui.screens.onboarding.OnBoardingScreen
+import com.example.thesimpsons.ui.screens.profile.ProfileScreen
+import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = hiltViewModel(), onMenuOpen:() -> Unit) {
+fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is MainUiState.Error -> {
@@ -70,100 +73,113 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel(), onMenuOpen:() -> Unit
         }
 
         is MainUiState.Success -> {
-            SuccessScreen((uiState as MainUiState.Success).firstAccess) { onMenuOpen() }
+            SuccessScreen(uiState as MainUiState.Success, onDarkModeClick = { viewModel.toggleDarkMode() })
         }
     }
 }
 
 @Composable
-fun SuccessScreen(firstAccess: Boolean, onMenuOpen: () -> Unit) {
+fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
 
     val bottomBarDestinations = listOf(
         Characters,
         Episodes,
         Location
     )
+    val mainNavKey = if (uiState.firstAccess) OnBoarding else Characters
 
-    val mainNavKey = if (firstAccess) OnBoarding else Characters
-
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     val backStack = rememberNavBackStack(mainNavKey)
     val showBottomBar = backStack.last() in bottomBarDestinations
     val currentRoute = backStack.last()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            if (showBottomBar) BottomBar(
-                currentRoute = currentRoute
-            )
-            {
-                backStack.backTo(it)
-            }
+    ModalDrawerItem(
+        drawerState,
+        onProfileClick = {
+            scope.launch { drawerState.close() }
+            backStack.navigateTo(Profile)
         },
-        topBar = { TopBarItem { onMenuOpen() } }
+        darkMode = uiState.darkMode,
+        username = uiState.username,
+        onDarkModeClick = { onDarkModeClick() }
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = {
+                if (showBottomBar) BottomBar(
+                    currentRoute = currentRoute
+                )
+                {
+                    backStack.backTo(it)
+                }
+            },
+            topBar = { TopBarItem { scope.launch { drawerState.open() } } }
 
-    ) { innerPadding ->
+        ) { innerPadding ->
 
-        NavDisplay(
-            backStack = backStack,
-            onBack = { backStack.back() },
-            entryProvider = entryProvider {
-                entry<OnBoarding> {
-                    OnBoardingScreen(innerPadding) {
-                        backStack.clearAndNavigateTo(
-                            Characters
-                        )
-                    }
-                }
-                entry<Characters> {
-                    CharactersScreen(innerPadding) {
-                        backStack.navigateTo(
-                            CharacterDetails(it)
-                        )
-                    }
-                }
-                entry<CharacterDetails> { key ->
-                    CharacterDetailsScreen(
-                        key.id,
-                        innerPadding
-                    ) { backStack.back() }
-                }
-                entry<Episodes> {
-                    EpisodesScreen(innerPadding) {
-                        backStack.navigateTo(
-                            EpisodeDetails(
-                                it
+            NavDisplay(
+                backStack = backStack,
+                onBack = { backStack.back() },
+                entryProvider = entryProvider {
+                    entry<OnBoarding> {
+                        OnBoardingScreen(innerPadding) {
+                            backStack.clearAndNavigateTo(
+                                Characters
                             )
-                        )
+                        }
                     }
+                    entry<Characters> {
+                        CharactersScreen(innerPadding) {
+                            backStack.navigateTo(
+                                CharacterDetails(it)
+                            )
+                        }
+                    }
+                    entry<CharacterDetails> { key ->
+                        CharacterDetailsScreen(
+                            key.id,
+                            innerPadding
+                        ) { backStack.back() }
+                    }
+                    entry<Episodes> {
+                        EpisodesScreen(innerPadding) {
+                            backStack.navigateTo(
+                                EpisodeDetails(
+                                    it
+                                )
+                            )
+                        }
+                    }
+                    entry<EpisodeDetails> { key ->
+                        EpisodeDetailsScreen(
+                            key.id,
+                            innerPadding
+                        ) { backStack.back() }
+                    }
+                    entry<Location> { LocationScreen(innerPadding) }
+                    entry<Profile> { ProfileScreen(innerPadding) { backStack.back() } }
+                },
+                transitionSpec = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(300)
+                    ) togetherWith slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popTransitionSpec = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(300)
+                    ) togetherWith slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(300)
+                    )
                 }
-                entry<EpisodeDetails> { key ->
-                    EpisodeDetailsScreen(
-                        key.id,
-                        innerPadding
-                    ) { backStack.back() }
-                }
-                entry<Location> { LocationScreen(innerPadding) }
-            },
-            transitionSpec = {
-                slideInHorizontally(
-                    initialOffsetX = { it },
-                    animationSpec = tween(300)
-                ) togetherWith slideOutHorizontally(
-                    targetOffsetX = { -it },
-                    animationSpec = tween(300)
-                )
-            },
-            popTransitionSpec = {
-                slideInHorizontally(
-                    initialOffsetX = { -it },
-                    animationSpec = tween(300)
-                ) togetherWith slideOutHorizontally(
-                    targetOffsetX = { it },
-                    animationSpec = tween(300)
-                )
-            }
-        )
+            )
+        }
     }
 }
 

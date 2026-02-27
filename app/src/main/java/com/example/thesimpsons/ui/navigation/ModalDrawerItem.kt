@@ -1,5 +1,6 @@
-package com.example.thesimpsons.ui.screens.modaldrawer
+package com.example.thesimpsons.ui.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
@@ -28,38 +30,43 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.SubtitleItem
+import com.example.thesimpsons.ui.screens.profile.ProfileUIState
 
 @Composable
 fun ModalDrawerItem(
     drawerState: DrawerState,
-    viewModel: ModalDrawerViewModel = hiltViewModel(),
+    darkMode:Boolean,
+    username:String,
     onProfileClick:() -> Unit,
+    onDarkModeClick:() -> Unit,
     content: @Composable () -> Unit,
 ) {
-
-    val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
-    val username by viewModel.username.collectAsStateWithLifecycle()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(modifier = Modifier.size(24.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.CenterStart) {
                     SubtitleItem(
                         "Welcome $username",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                        singleLine = true
                     )
-                    Icon(painterResource(R.drawable.ic_sun), "")
                 }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 NavigationDrawerItem(
-                    label = { Text("Profile") },
+                    label = { Text("Profile settings") },
                     selected = false,
                     onClick = { onProfileClick() },
                     icon = { Icon(Icons.Default.Person, "profile icon") },
+                    shape = RoundedCornerShape(4.dp),
+                )
+                NavigationDrawerItem(
+                    label = { Text("My favorites") },
+                    selected = false,
+                    onClick = { onProfileClick() },
+                    icon = { Icon(Icons.Default.Favorite, "profile icon") },
                     shape = RoundedCornerShape(4.dp),
                 )
                 NavigationDrawerItem(
@@ -79,13 +86,13 @@ fun ModalDrawerItem(
                 NavigationDrawerItem(
                     label = { Text("Dark Mode") },
                     selected = false,
-                    onClick = { viewModel.modifyDarkMode(!darkMode) },
+                    onClick = { onDarkModeClick() },
                     icon = { Icon(painterResource(R.drawable.ic_dark_mode), "share icon") },
                     shape = RoundedCornerShape(4.dp),
                     badge = {
                         Switch(
                             checked = darkMode,
-                            onCheckedChange = { viewModel.modifyDarkMode(!darkMode) })
+                            onCheckedChange = { onDarkModeClick() })
                     }
                 )
             }

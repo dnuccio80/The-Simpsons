@@ -16,4 +16,9 @@ sealed class NavRoutes : NavKey {
     data class EpisodeDetails(val id:Int):NavRoutes()
     @Serializable
     data object Location:NavRoutes()
+    @Serializable
+    data object Profile: NavRoutes()
+    @Serializable
+    data object Favorites: NavRoutes()
+
 }
