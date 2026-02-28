@@ -109,6 +109,11 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
                     scope.launch { drawerState.close() }
                     backStack.navigateTo(Favorites)
                 }
+
+                ModalDrawerAction.BACK_HOME -> {
+                    scope.launch { drawerState.close() }
+                    backStack.backTo(Characters)
+                }
             }
         },
         darkMode = uiState.darkMode,

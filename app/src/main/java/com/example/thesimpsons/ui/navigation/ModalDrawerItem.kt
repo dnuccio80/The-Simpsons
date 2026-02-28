@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbUp
@@ -50,6 +51,13 @@ fun ModalDrawerItem(
                 }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 NavigationDrawerItem(
+                    label = { Text("Home") },
+                    selected = false,
+                    onClick = { onActionDone(BACK_HOME) },
+                    icon = { Icon(Icons.Default.Home, "home icon") },
+                    shape = RoundedCornerShape(4.dp),
+                )
+                NavigationDrawerItem(
                     label = { Text("Profile settings") },
                     selected = false,
                     onClick = { onActionDone(PROFILE_CLICK) },
@@ -60,7 +68,7 @@ fun ModalDrawerItem(
                     label = { Text("My favorites") },
                     selected = false,
                     onClick = { onActionDone(FAVORITE_CLICK) },
-                    icon = { Icon(Icons.Default.Favorite, "profile icon") },
+                    icon = { Icon(Icons.Default.Favorite, "favorites icon") },
                     shape = RoundedCornerShape(4.dp),
                 )
                 NavigationDrawerItem(
@@ -74,14 +82,14 @@ fun ModalDrawerItem(
                     label = { Text("Rate us on Play Store") },
                     selected = false,
                     onClick = { },
-                    icon = { Icon(Icons.Default.ThumbUp, "share icon") },
+                    icon = { Icon(Icons.Default.ThumbUp, "rate icon") },
                     shape = RoundedCornerShape(4.dp),
                 )
                 NavigationDrawerItem(
                     label = { Text("Dark Mode") },
                     selected = false,
                     onClick = { onActionDone(TOGGLE_DARK_MODE) },
-                    icon = { Icon(painterResource(R.drawable.ic_dark_mode), "share icon") },
+                    icon = { Icon(painterResource(R.drawable.ic_dark_mode), "dark mode icon") },
                     shape = RoundedCornerShape(4.dp),
                     badge = {
                         Switch(
@@ -98,5 +106,5 @@ fun ModalDrawerItem(
 }
 
 enum class ModalDrawerAction {
-    TOGGLE_DARK_MODE, PROFILE_CLICK, FAVORITE_CLICK
+    TOGGLE_DARK_MODE, PROFILE_CLICK, FAVORITE_CLICK, BACK_HOME
 }
