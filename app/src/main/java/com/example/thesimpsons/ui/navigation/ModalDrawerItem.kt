@@ -1,7 +1,6 @@
 package com.example.thesimpsons.ui.navigation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,27 +20,22 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.SubtitleItem
-import com.example.thesimpsons.ui.screens.profile.ProfileUIState
+import com.example.thesimpsons.ui.navigation.ModalDrawerAction.*
 
 @Composable
 fun ModalDrawerItem(
     drawerState: DrawerState,
     darkMode:Boolean,
     username:String,
-    onProfileClick:() -> Unit,
-    onDarkModeClick:() -> Unit,
+    onActionDone:(ModalDrawerAction) -> Unit,
     content: @Composable () -> Unit,
 ) {
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -58,14 +52,14 @@ fun ModalDrawerItem(
                 NavigationDrawerItem(
                     label = { Text("Profile settings") },
                     selected = false,
-                    onClick = { onProfileClick() },
+                    onClick = { onActionDone(PROFILE_CLICK) },
                     icon = { Icon(Icons.Default.Person, "profile icon") },
                     shape = RoundedCornerShape(4.dp),
                 )
                 NavigationDrawerItem(
                     label = { Text("My favorites") },
                     selected = false,
-                    onClick = { onProfileClick() },
+                    onClick = { onActionDone(FAVORITE_CLICK) },
                     icon = { Icon(Icons.Default.Favorite, "profile icon") },
                     shape = RoundedCornerShape(4.dp),
                 )
@@ -86,13 +80,13 @@ fun ModalDrawerItem(
                 NavigationDrawerItem(
                     label = { Text("Dark Mode") },
                     selected = false,
-                    onClick = { onDarkModeClick() },
+                    onClick = { onActionDone(TOGGLE_DARK_MODE) },
                     icon = { Icon(painterResource(R.drawable.ic_dark_mode), "share icon") },
                     shape = RoundedCornerShape(4.dp),
                     badge = {
                         Switch(
                             checked = darkMode,
-                            onCheckedChange = { onDarkModeClick() })
+                            onCheckedChange = { onActionDone(TOGGLE_DARK_MODE) })
                     }
                 )
             }
@@ -101,4 +95,8 @@ fun ModalDrawerItem(
         content()
     }
 
+}
+
+enum class ModalDrawerAction {
+    TOGGLE_DARK_MODE, PROFILE_CLICK, FAVORITE_CLICK
 }

@@ -20,5 +20,4 @@ sealed class NavRoutes : NavKey {
     data object Profile: NavRoutes()
     @Serializable
     data object Favorites: NavRoutes()
-
 }

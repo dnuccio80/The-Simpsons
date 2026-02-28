@@ -70,9 +70,10 @@ fun ButtonContentText(text: String, color: Color = Color.White, modifier: Modifi
 }
 
 @Composable
-fun BodyTextItem(text: String, whiteColor: Boolean = false) {
+fun BodyTextItem(text: String, whiteColor: Boolean = false, modifier: Modifier = Modifier) {
     Text(
         text,
+        modifier = modifier,
         fontSize = 14.sp,
         color = if (whiteColor) Color.White else Color.Unspecified
     )

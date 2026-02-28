@@ -41,6 +41,7 @@ import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.backTo
 import com.example.thesimpsons.ui.core.extensions.clearAndNavigateTo
 import com.example.thesimpsons.ui.core.extensions.navigateTo
+import com.example.thesimpsons.ui.navigation.ModalDrawerAction
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.episodedetails.EpisodeDetailsScreen
@@ -49,6 +50,7 @@ import com.example.thesimpsons.ui.screens.locations.LocationScreen
 import com.example.thesimpsons.ui.navigation.ModalDrawerItem
 import com.example.thesimpsons.ui.navigation.NavRoutes
 import com.example.thesimpsons.ui.navigation.NavRoutes.*
+import com.example.thesimpsons.ui.screens.favorites.FavoritesScreen
 import com.example.thesimpsons.ui.screens.onboarding.OnBoardingScreen
 import com.example.thesimpsons.ui.screens.profile.ProfileScreen
 import kotlinx.coroutines.launch
@@ -96,13 +98,21 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
 
     ModalDrawerItem(
         drawerState,
-        onProfileClick = {
-            scope.launch { drawerState.close() }
-            backStack.navigateTo(Profile)
+        onActionDone =  { action ->
+            when(action) {
+                ModalDrawerAction.TOGGLE_DARK_MODE -> { onDarkModeClick() }
+                ModalDrawerAction.PROFILE_CLICK -> {
+                    scope.launch { drawerState.close() }
+                    backStack.navigateTo(Profile)
+                }
+                ModalDrawerAction.FAVORITE_CLICK -> {
+                    scope.launch { drawerState.close() }
+                    backStack.navigateTo(Favorites)
+                }
+            }
         },
         darkMode = uiState.darkMode,
         username = uiState.username,
-        onDarkModeClick = { onDarkModeClick() }
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -159,6 +169,7 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
                     }
                     entry<Location> { LocationScreen(innerPadding) }
                     entry<Profile> { ProfileScreen(innerPadding) { backStack.back() } }
+                    entry<Favorites> { FavoritesScreen(innerPadding) }
                 },
                 transitionSpec = {
                     slideInHorizontally(
