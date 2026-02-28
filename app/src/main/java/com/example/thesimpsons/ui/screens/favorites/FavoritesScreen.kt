@@ -68,7 +68,7 @@ fun FavoritesScreen(innerPadding: PaddingValues, viewModel: FavoritesViewModel =
         ) {
             Header()
             Spacer(Modifier.size(0.dp))
-            Sliders(selectableList, selectedSlider)
+            Sliders(selectableList, selectedSlider) { selectedSlider = it }
             Section(darkMode = darkMode, characters) { }
         }
     }
@@ -79,8 +79,8 @@ fun FavoritesScreen(innerPadding: PaddingValues, viewModel: FavoritesViewModel =
 private fun Sliders(
     selectableList: List<String>,
     selectedSlider: String,
+    onClick: (String) -> Unit
 ) {
-    var selectedSlider1 = selectedSlider
     Column {
         Row(
             Modifier
@@ -90,8 +90,8 @@ private fun Sliders(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             selectableList.forEach { selectableName ->
-                SelectableSlider(selectableName, selectedSlider1) {
-                    selectedSlider1 = selectableName
+                SelectableSlider(selectableName, selectedSlider) {
+                    onClick(selectableName)
                 }
             }
         }

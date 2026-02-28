@@ -45,7 +45,7 @@ fun ModalDrawerItem(
                 Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.CenterStart) {
                     SubtitleItem(
                         "Welcome $username",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         singleLine = true
                     )
                 }
