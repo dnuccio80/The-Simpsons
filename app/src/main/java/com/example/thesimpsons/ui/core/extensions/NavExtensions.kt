@@ -24,5 +24,5 @@ fun NavBackStack<NavKey>.backTo(targetScreen: NavKey) {
 
 fun NavBackStack<NavKey>.clearAndNavigateTo(targetScreen: NavKey) {
     clear()
-    navigateTo(targetScreen)
+    add(targetScreen)
 }
