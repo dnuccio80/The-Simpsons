@@ -1,13 +1,11 @@
 package com.example.thesimpsons.ui.screens.characterdetails
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,8 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,7 +38,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.thesimpsons.domain.data_classes.CharacterDomain
 import com.example.thesimpsons.ui.core.BodyTextItem
-import com.example.thesimpsons.ui.core.ButtonTextItem
 import com.example.thesimpsons.ui.core.Images
 import com.example.thesimpsons.ui.core.InfoTextItem
 import com.example.thesimpsons.ui.core.ScreenContainer
@@ -113,13 +108,7 @@ fun Details(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
                 Icon(
                     Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = "back button",
@@ -129,20 +118,8 @@ fun Details(
                         .clickable {
                             onBackClick()
                         })
-                Button(
-                    onClick = { isFav = !isFav },
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if(isFav) GreenApp else Color.DarkGray
-                    )
-
-                ) {
-                    BodyTextItem(if(isFav) "In favorites!" else "Add to favorites", whiteColor = true)
-                }
             }
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
 
-            }
             Box(Modifier.size(280.dp), contentAlignment = Alignment.BottomCenter) {
                 Card(
                     Modifier

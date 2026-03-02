@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
@@ -27,7 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.SubtitleItem
-import com.example.thesimpsons.ui.navigation.ModalDrawerAction.*
+import com.example.thesimpsons.ui.navigation.ModalDrawerAction.BACK_HOME
+import com.example.thesimpsons.ui.navigation.ModalDrawerAction.PROFILE_CLICK
+import com.example.thesimpsons.ui.navigation.ModalDrawerAction.TOGGLE_DARK_MODE
 
 @Composable
 fun ModalDrawerItem(
@@ -65,13 +66,6 @@ fun ModalDrawerItem(
                     shape = RoundedCornerShape(4.dp),
                 )
                 NavigationDrawerItem(
-                    label = { Text("My favorites") },
-                    selected = false,
-                    onClick = { onActionDone(FAVORITE_CLICK) },
-                    icon = { Icon(Icons.Default.Favorite, "favorites icon") },
-                    shape = RoundedCornerShape(4.dp),
-                )
-                NavigationDrawerItem(
                     label = { Text("Recommend The Simpsons Api") },
                     selected = false,
                     onClick = { },
@@ -106,5 +100,5 @@ fun ModalDrawerItem(
 }
 
 enum class ModalDrawerAction {
-    TOGGLE_DARK_MODE, PROFILE_CLICK, FAVORITE_CLICK, BACK_HOME
+    TOGGLE_DARK_MODE, PROFILE_CLICK, BACK_HOME
 }

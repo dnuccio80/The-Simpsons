@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,15 +41,19 @@ import com.example.thesimpsons.ui.core.extensions.backTo
 import com.example.thesimpsons.ui.core.extensions.clearAndNavigateTo
 import com.example.thesimpsons.ui.core.extensions.navigateTo
 import com.example.thesimpsons.ui.navigation.ModalDrawerAction
+import com.example.thesimpsons.ui.navigation.ModalDrawerItem
+import com.example.thesimpsons.ui.navigation.NavRoutes.CharacterDetails
+import com.example.thesimpsons.ui.navigation.NavRoutes.Characters
+import com.example.thesimpsons.ui.navigation.NavRoutes.EpisodeDetails
+import com.example.thesimpsons.ui.navigation.NavRoutes.Episodes
+import com.example.thesimpsons.ui.navigation.NavRoutes.Location
+import com.example.thesimpsons.ui.navigation.NavRoutes.OnBoarding
+import com.example.thesimpsons.ui.navigation.NavRoutes.Profile
 import com.example.thesimpsons.ui.screens.characterdetails.CharacterDetailsScreen
 import com.example.thesimpsons.ui.screens.characters.CharactersScreen
 import com.example.thesimpsons.ui.screens.episodedetails.EpisodeDetailsScreen
 import com.example.thesimpsons.ui.screens.episodes.EpisodesScreen
 import com.example.thesimpsons.ui.screens.locations.LocationScreen
-import com.example.thesimpsons.ui.navigation.ModalDrawerItem
-import com.example.thesimpsons.ui.navigation.NavRoutes
-import com.example.thesimpsons.ui.navigation.NavRoutes.*
-import com.example.thesimpsons.ui.screens.favorites.FavoritesScreen
 import com.example.thesimpsons.ui.screens.onboarding.OnBoardingScreen
 import com.example.thesimpsons.ui.screens.profile.ProfileScreen
 import kotlinx.coroutines.launch
@@ -105,11 +108,6 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
                     scope.launch { drawerState.close() }
                     backStack.navigateTo(Profile)
                 }
-                ModalDrawerAction.FAVORITE_CLICK -> {
-                    scope.launch { drawerState.close() }
-                    backStack.navigateTo(Favorites)
-                }
-
                 ModalDrawerAction.BACK_HOME -> {
                     scope.launch { drawerState.close() }
                     backStack.backTo(Characters)
@@ -174,7 +172,6 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
                     }
                     entry<Location> { LocationScreen(innerPadding) }
                     entry<Profile> { ProfileScreen(innerPadding) { backStack.back() } }
-                    entry<Favorites> { FavoritesScreen(innerPadding) }
                 },
                 transitionSpec = {
                     slideInHorizontally(
