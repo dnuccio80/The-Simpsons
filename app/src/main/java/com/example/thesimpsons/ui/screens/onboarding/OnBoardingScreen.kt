@@ -271,7 +271,7 @@ fun RadioButtonItem(mode: VisualMode, selected: String, onClick: (VisualMode) ->
     ) {
         RadioButton(
             selected = selected == mode.mode,
-            onClick = { },
+            onClick = { onClick(mode) },
             colors = RadioButtonDefaults.colors(
                 selectedColor = YellowMain,
                 unselectedColor = YellowSecondary
