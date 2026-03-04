@@ -91,10 +91,10 @@ fun CharactersScreen(
 fun CharacterList(characters: LazyPagingItems<CharacterDomain>, darkMode: Boolean, onItemClick: (Int) -> Unit) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(16.dp),
         state = rememberLazyGridState(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(

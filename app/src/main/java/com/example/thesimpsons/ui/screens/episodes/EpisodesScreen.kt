@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -92,9 +92,9 @@ fun EpisodeItem(episode: EpisodeDomain, onClick:() -> Unit) {
 
     Card(
         modifier = Modifier
+            .aspectRatio(1.8f)
             .fillMaxWidth()
-            .height(250.dp)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 16.dp)
             .clickable { onClick() }
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
