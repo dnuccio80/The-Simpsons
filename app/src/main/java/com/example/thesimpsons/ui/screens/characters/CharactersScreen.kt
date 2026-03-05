@@ -1,5 +1,6 @@
 package com.example.thesimpsons.ui.screens.characters
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,11 +20,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,8 +56,21 @@ fun CharactersScreen(
     val characters = viewModel.characters.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsStateWithLifecycle()
     val darkMode by viewModel.darkMode.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    ScreenContainer(innerPadding,alignment = Alignment.TopCenter) {
+
+    LaunchedEffect(characters.loadState) {
+
+        if (characters.loadState.refresh is LoadState.Error) {
+            Toast.makeText(
+                context,
+                "Error: ${(characters.loadState.refresh as LoadState.Error).error.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
         Column(
             Modifier
                 .fillMaxWidth(),
@@ -69,26 +85,23 @@ fun CharactersScreen(
                 queryPlaceHolder = "Search character..",
                 onQueryChange = { viewModel.updateQuery(it) }
             )
-            when (characters.loadState.refresh) {
-                is LoadState.Loading -> {
-                    CircularProgressIndicator()
-                }
 
-                is LoadState.Error -> {
-                    Text("Error loading characters")
-                }
+            if (characters.loadState.refresh is LoadState.Loading) {
+                CircularProgressIndicator()
 
-                is LoadState.NotLoading -> {
-                    CharacterList(characters, darkMode) { onNavigateToDetails(it) }
-                }
+            } else {
+                CharacterList(characters, darkMode) { onNavigateToDetails(it) }
             }
         }
-
     }
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterDomain>, darkMode: Boolean, onItemClick: (Int) -> Unit) {
+fun CharacterList(
+    characters: LazyPagingItems<CharacterDomain>,
+    darkMode: Boolean,
+    onItemClick: (Int) -> Unit,
+) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Adaptive(150.dp),
@@ -103,6 +116,11 @@ fun CharacterList(characters: LazyPagingItems<CharacterDomain>, darkMode: Boolea
         ) { index ->
             characters[index]?.let { character ->
                 ItemList(character, darkMode) { onItemClick(character.id) }
+            }
+        }
+        item {
+            if (characters.loadState.append is LoadState.Loading) {
+                CircularProgressIndicator()
             }
         }
     }

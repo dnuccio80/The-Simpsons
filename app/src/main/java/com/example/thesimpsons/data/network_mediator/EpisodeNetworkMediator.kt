@@ -5,10 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import coil.network.HttpException
 import com.example.thesimpsons.data.local.db.AppDataBase
 import com.example.thesimpsons.data.local.dao.EpisodeDao
 import com.example.thesimpsons.data.local.entity.EpisodeEntity
 import com.example.thesimpsons.data.network.ApiService
+import java.io.IOException
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -34,8 +36,14 @@ class EpisodeNetworkMediator @Inject constructor(
                 }
 
                 LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(true)
-                    lastItem.page + 1
+                    val lastItem = state.lastItemOrNull()
+
+                    if (lastItem == null) {
+                        1
+                    } else {
+                        (lastItem.id / state.config.pageSize) + 1
+                    }
+
                 }
             }
 
@@ -56,8 +64,10 @@ class EpisodeNetworkMediator @Inject constructor(
 
             MediatorResult.Success(response.results.isEmpty())
 
-        } catch (e: Exception) {
-            return MediatorResult.Success(true)
+        } catch (e: IOException) {
+            return MediatorResult.Error(e)
+        } catch (e: HttpException) {
+            return MediatorResult.Error(e)
         }
 
 

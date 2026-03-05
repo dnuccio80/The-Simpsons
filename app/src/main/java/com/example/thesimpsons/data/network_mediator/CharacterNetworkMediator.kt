@@ -1,20 +1,23 @@
 package com.example.thesimpsons.data.network_mediator
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.thesimpsons.data.local.db.AppDataBase
+import coil.network.HttpException
 import com.example.thesimpsons.data.local.dao.CharacterDao
+import com.example.thesimpsons.data.local.db.AppDataBase
 import com.example.thesimpsons.data.local.entity.CharacterEntity
 import com.example.thesimpsons.data.network.ApiService
+import okio.IOException
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class CharacterNetworkMediator @Inject constructor(
-    private val apiService:ApiService,
     private val db: AppDataBase,
+    private val apiService:ApiService,
     private val dao: CharacterDao
 ):RemoteMediator<Int,CharacterEntity>() {
 
@@ -30,8 +33,13 @@ class CharacterNetworkMediator @Inject constructor(
                     return MediatorResult.Success(true)
                 }
                 LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(true)
-                    lastItem.page + 1
+                    val lastItem = state.lastItemOrNull()
+
+                    if(lastItem == null) {
+                        1
+                    } else {
+                        (lastItem.id / state.config.pageSize) + 1
+                    }
                 }
             }
 
@@ -49,10 +57,13 @@ class CharacterNetworkMediator @Inject constructor(
 
                 dao.insertAll(entities)
             }
+            Log.d("MEDIATOR", "loadType=$loadType, itemsInState=${state.pages.sumOf { it.data.size }}")
             MediatorResult.Success(response.results.isEmpty())
 
-        }catch (e:Exception) {
-            MediatorResult.Success(true)
+        }catch (e: IOException) {
+            MediatorResult.Error(e)
+        }catch (e: HttpException) {
+            MediatorResult.Error(e)
         }
 
     }

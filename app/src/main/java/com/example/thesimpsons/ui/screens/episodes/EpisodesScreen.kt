@@ -1,5 +1,6 @@
 package com.example.thesimpsons.ui.screens.episodes
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,12 +17,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +46,14 @@ fun EpisodesScreen(innerPadding: PaddingValues, viewModel: EpisodesViewModel = h
 
     val episodes = viewModel.episodeList.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(episodes.loadState) {
+        if(episodes.loadState.refresh is LoadState.Error) {
+            Toast.makeText(context, "Error: ${(episodes.loadState.refresh as LoadState.Error).error.message}",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
 
     ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
         Column(
@@ -59,10 +70,11 @@ fun EpisodesScreen(innerPadding: PaddingValues, viewModel: EpisodesViewModel = h
                 queryPlaceHolder = "Search Episode..",
                 onQueryChange = { viewModel.updateQuery(it) }
             )
-            when (episodes.loadState.refresh) {
-                is LoadState.Error -> { Text("Error loading episodes") }
-                LoadState.Loading -> { CircularProgressIndicator() }
-                is LoadState.NotLoading -> { LazyEpisodesColumn(episodes) { onEpisodeClick(it) } }
+
+            if(episodes.loadState.refresh is LoadState.Loading) {
+                CircularProgressIndicator()
+            } else {
+                LazyEpisodesColumn(episodes) { onEpisodeClick(it) }
             }
         }
     }
@@ -81,6 +93,11 @@ fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>, onClick: (Int) 
             key = { index -> episodes[index]?.id ?: index }) { index ->
             episodes[index]?.let {
                 EpisodeItem(it) { onClick(it.id) }
+            }
+        }
+        item {
+            if(episodes.loadState.append is LoadState.Loading) {
+                CircularProgressIndicator()
             }
         }
     }
