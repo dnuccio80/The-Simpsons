@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -119,7 +121,7 @@ fun OnBoardingScreen(
 }
 
 @Composable
-fun Welcome(darkMode:Boolean, onNextClick: () -> Unit) {
+fun Welcome(darkMode: Boolean, onNextClick: () -> Unit) {
     OnBoardingBody(
         painterResource(R.drawable.family_friendly),
         buttonText = "Next",
@@ -179,11 +181,9 @@ fun GenericTextField(
     TextField(
         value = query,
         onValueChange = {
-            val newValue = if (it.isNotBlank()) {
-                it.replaceFirstChar { char -> char.titlecase() }
-            } else it
-            onUpdate(newValue)
+            onUpdate(it)
         },
+        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
         singleLine = true,
         shape = RoundedCornerShape(4.dp),
         colors = TextFieldDefaults.colors(

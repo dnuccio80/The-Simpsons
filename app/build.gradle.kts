@@ -97,6 +97,12 @@ dependencies {
 
     // Firebase
 
+    // Testing
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    testImplementation( libs.kotlinx.coroutines.test)
+    testImplementation (libs.jetbrains.kotlinx.coroutines.test)
+    testImplementation( libs.androidx.core.testing)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -23,8 +23,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -92,15 +96,20 @@ fun SuccessScreen(uiState: MainUiState.Success, onDarkModeClick:() -> Unit) {
         Location
     )
     val mainNavKey = if (uiState.firstAccess) OnBoarding else Characters
-
+    var gestureEnabled by rememberSaveable { mutableStateOf(false) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val backStack = rememberNavBackStack(mainNavKey)
     val showBottomBar = backStack.last() in bottomBarDestinations
     val currentRoute = backStack.last()
 
+    LaunchedEffect(uiState.firstAccess) {
+        if(!uiState.firstAccess) gestureEnabled = true
+    }
+
     ModalDrawerItem(
         drawerState,
+        gestureEnabled = gestureEnabled,
         onActionDone =  { action ->
             when(action) {
                 ModalDrawerAction.TOGGLE_DARK_MODE -> { onDarkModeClick() }
