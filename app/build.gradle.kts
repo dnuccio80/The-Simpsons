@@ -95,16 +95,21 @@ dependencies {
     // Data Store
     implementation(libs.androidx.datastore.preferences)
 
-    // Firebase
-
-    // Testing
+    // Mockk
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
-    testImplementation( libs.kotlinx.coroutines.test)
-    testImplementation (libs.jetbrains.kotlinx.coroutines.test)
-    testImplementation( libs.androidx.core.testing)
 
     testImplementation(libs.junit)
+
+    // Coroutines test
+    testImplementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.paging.common)
+
+    // ViewModel test
+    implementation (libs.kotlinx.coroutines.android.v160)
+    testImplementation (libs.jetbrains.kotlinx.coroutines.test)
+    testImplementation (libs.androidx.core.testing.v210)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -149,6 +149,38 @@ fun ButtonTextItem(text: String, contentColor: Color = Color.White, onClick: () 
 }
 
 @Composable
+fun GenericTextField(
+    query: String,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    onUpdate: (String) -> Unit,
+) {
+    TextField(
+        value = query,
+        onValueChange = {
+            onUpdate(it)
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
+        singleLine = true,
+        shape = RoundedCornerShape(4.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = YellowMain,
+            unfocusedContainerColor = YellowMain,
+            unfocusedTextColor = Color.Black,
+            focusedTextColor = Color.Black,
+            unfocusedPlaceholderColor = Color.Black,
+            focusedPlaceholderColor = Color.Black
+        ),
+        placeholder = { Text(placeholder) },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    )
+}
+
+@Composable
 fun QuerySearchItem(
     query: String,
     placeholder: String,

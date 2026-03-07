@@ -22,10 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.SubtitleItem
+import com.example.thesimpsons.ui.core.TestTags
+import com.example.thesimpsons.ui.core.TestTags.Companion.PROFILE_NAVIGATION_ITEM
 import com.example.thesimpsons.ui.navigation.ModalDrawerAction.BACK_HOME
 import com.example.thesimpsons.ui.navigation.ModalDrawerAction.PROFILE_CLICK
 import com.example.thesimpsons.ui.navigation.ModalDrawerAction.TOGGLE_DARK_MODE
@@ -66,6 +69,7 @@ fun ModalDrawerItem(
                     onClick = { onActionDone(PROFILE_CLICK) },
                     icon = { Icon(Icons.Default.Person, "profile icon") },
                     shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier.testTag(PROFILE_NAVIGATION_ITEM)
                 )
                 NavigationDrawerItem(
                     label = { Text("Recommend The Simpsons Api") },

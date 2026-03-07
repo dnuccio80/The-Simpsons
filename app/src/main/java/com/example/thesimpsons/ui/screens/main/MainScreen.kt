@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +40,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.thesimpsons.ui.core.BottomBar
+import com.example.thesimpsons.ui.core.TestTags
+import com.example.thesimpsons.ui.core.TestTags.Companion.BURGER_MENU
 import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.backTo
@@ -210,7 +213,8 @@ fun TopBarItem(onMenuClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 36.dp),
+            .padding(horizontal = 16.dp, vertical = 36.dp)
+            .testTag(BURGER_MENU),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

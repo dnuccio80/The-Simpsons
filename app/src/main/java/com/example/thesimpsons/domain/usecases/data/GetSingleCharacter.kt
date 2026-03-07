@@ -6,7 +6,5 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetSingleCharacter @Inject constructor(private val repository: DataRepository) {
-
     suspend operator fun invoke(id: Int): Flow<CharacterDomain> = repository.getSingleCharacter(id)
-
 }

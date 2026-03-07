@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,15 +28,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.thesimpsons.R
-import com.example.thesimpsons.ui.core.BodyTextItem
+import com.example.thesimpsons.ui.core.GenericTextField
 import com.example.thesimpsons.ui.core.ScreenContainer
 import com.example.thesimpsons.ui.core.SubtitleItem
-import com.example.thesimpsons.ui.screens.onboarding.GenericTextField
+import com.example.thesimpsons.ui.core.TestTags
+import com.example.thesimpsons.ui.core.TestTags.Companion.CHECK_BUTTON
+import com.example.thesimpsons.ui.core.TestTags.Companion.ERROR_MSG
+import com.example.thesimpsons.ui.core.TestTags.Companion.GENERIC_TEXT_FIELD
 import com.example.thesimpsons.ui.theme.YellowMain
 
 @Composable
@@ -94,10 +96,13 @@ fun ProfileScreen(
                     SubtitleItem("Want to change it?")
                     GenericTextField(
                         query = query,
-                        placeholder = "Your new username.."
+                        placeholder = "Your new username..",
+                        modifier = Modifier.testTag(GENERIC_TEXT_FIELD)
                     ) { query = it }
                     AnimatedVisibility(showError) {
-                        Text("You must to write your new username!", color = Color.Red)
+                        Text("You must to write your new username!", color = Color.Red, modifier = Modifier.testTag(
+                            ERROR_MSG
+                        ))
                     }
                     Button(
                         onClick = {
@@ -110,7 +115,8 @@ fun ProfileScreen(
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = YellowMain
-                        )
+                        ),
+                        modifier = Modifier.testTag(CHECK_BUTTON)
                     ) {
                         Text("Change")
                     }

@@ -18,13 +18,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,7 +42,11 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.thesimpsons.R
 import com.example.thesimpsons.ui.core.BodyTextItem
 import com.example.thesimpsons.ui.core.ButtonTextItem
+import com.example.thesimpsons.ui.core.GenericTextField
 import com.example.thesimpsons.ui.core.SubtitleItem
+import com.example.thesimpsons.ui.core.TestTags.Companion.ERROR_MSG
+import com.example.thesimpsons.ui.core.TestTags.Companion.GENERIC_TEXT_FIELD
+import com.example.thesimpsons.ui.core.TestTags.Companion.NEXT_BUTTON
 import com.example.thesimpsons.ui.core.TitleItem
 import com.example.thesimpsons.ui.core.extensions.back
 import com.example.thesimpsons.ui.core.extensions.navigateTo
@@ -160,10 +160,15 @@ fun EnterName(onNextClick: (String) -> Unit) {
             GenericTextField(
                 query = name,
                 placeholder = "Your name..",
+                modifier = Modifier.testTag(GENERIC_TEXT_FIELD),
                 onUpdate = { name = it }
             )
             AnimatedVisibility(showError) {
-                Text("You must to enter your name!", color = Color.Red)
+                Text(
+                    "You must to enter your name!", color = Color.Red, modifier = Modifier.testTag(
+                        ERROR_MSG
+                    )
+                )
             }
         }
     ) {
@@ -172,36 +177,6 @@ fun EnterName(onNextClick: (String) -> Unit) {
     }
 }
 
-@Composable
-fun GenericTextField(
-    query: String,
-    placeholder: String,
-    onUpdate: (String) -> Unit,
-) {
-    TextField(
-        value = query,
-        onValueChange = {
-            onUpdate(it)
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
-        singleLine = true,
-        shape = RoundedCornerShape(4.dp),
-        colors = TextFieldDefaults.colors(
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            focusedContainerColor = YellowMain,
-            unfocusedContainerColor = YellowMain,
-            unfocusedTextColor = Color.Black,
-            focusedTextColor = Color.Black,
-            unfocusedPlaceholderColor = Color.Black,
-            focusedPlaceholderColor = Color.Black
-        ),
-        placeholder = { Text(placeholder) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    )
-}
 
 @Composable
 private fun OnBoardingBody(
@@ -229,7 +204,9 @@ private fun OnBoardingBody(
         ) {
             content()
         }
-        ButtonTextItem(buttonText, contentColor = Color.Black) { onButtonClick() }
+        Box(modifier = Modifier.testTag(NEXT_BUTTON)) {
+            ButtonTextItem(buttonText, contentColor = Color.Black) { onButtonClick() }
+        }
     }
 }
 
