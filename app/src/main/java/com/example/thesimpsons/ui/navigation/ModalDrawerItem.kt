@@ -35,11 +35,13 @@ fun ModalDrawerItem(
     drawerState: DrawerState,
     darkMode:Boolean,
     username:String,
+    gestureEnabled:Boolean,
     onActionDone:(ModalDrawerAction) -> Unit,
     content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = gestureEnabled,
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(modifier = Modifier.size(24.dp))
