@@ -1,0 +1,150 @@
+package com.danucdev.thesimpsons.ui.screens.episodes
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.paging.LoadState
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
+import com.danucdev.thesimpsons.R
+import com.danucdev.thesimpsons.domain.data_classes.EpisodeDomain
+import com.danucdev.thesimpsons.ui.core.EmptyLazyListError
+import com.danucdev.thesimpsons.ui.core.Header
+import com.danucdev.thesimpsons.ui.core.Images
+import com.danucdev.thesimpsons.ui.core.ScreenContainer
+import com.danucdev.thesimpsons.ui.theme.GreenApp
+
+@Composable
+fun EpisodesScreen(
+    innerPadding: PaddingValues,
+    viewModel: EpisodesViewModel = hiltViewModel(),
+    onEpisodeClick: (Int) -> Unit,
+) {
+
+    val episodes = viewModel.episodeList.collectAsLazyPagingItems()
+    val query by viewModel.query.collectAsState()
+    var itemsError by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(episodes.itemSnapshotList) {
+        itemsError = episodes.itemSnapshotList.isEmpty()
+    }
+
+    ScreenContainer(innerPadding, alignment = Alignment.TopCenter) {
+        Column(
+            Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Header(
+                query,
+                title = "Episodes",
+                leadingImage = painterResource(R.drawable.hugo_ic),
+                trailingImage = painterResource(R.drawable.bambino_ic),
+                queryPlaceHolder = "Search Episode..",
+                onQueryChange = { viewModel.updateQuery(it) }
+            )
+
+            if (episodes.loadState.refresh is LoadState.Loading) {
+                CircularProgressIndicator()
+            } else {
+                if (itemsError) {
+                    EmptyLazyListError()
+                } else {
+                    LazyEpisodesColumn(episodes) { onEpisodeClick(it) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LazyEpisodesColumn(episodes: LazyPagingItems<EpisodeDomain>, onClick: (Int) -> Unit) {
+
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        state = rememberLazyListState()
+    ) {
+        items(
+            episodes.itemCount,
+            key = { index -> episodes[index]?.id ?: index }) { index ->
+            episodes[index]?.let {
+                EpisodeItem(it) { onClick(it.id) }
+            }
+        }
+        item {
+            if (episodes.loadState.append is LoadState.Loading) {
+                CircularProgressIndicator()
+            }
+        }
+    }
+
+}
+
+@Composable
+fun EpisodeItem(episode: EpisodeDomain, onClick: () -> Unit) {
+
+    Card(
+        modifier = Modifier
+            .aspectRatio(1.8f)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clickable { onClick() }
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            AsyncImage(
+                model = Images.createPath(Images.PORTRAIT_SIZE, episode.imagePath),
+                contentDescription = "",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+
+                )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .background(GreenApp.copy(alpha = .9f)), contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "Season: ${episode.season}: ${episode.name}",
+                    modifier = Modifier.padding(8.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+    }
+
+}

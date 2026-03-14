@@ -9,26 +9,36 @@ plugins {
 }
 
 android {
-    namespace = "com.example.thesimpsons"
+    namespace = "com.danucdev.thesimpsons"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.thesimpsons"
+        applicationId = "com.danucdev.thesimpsons"
         minSdk = 27
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 10
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
+        }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = true
+
         }
     }
     compileOptions {
@@ -94,9 +104,6 @@ dependencies {
 
     // Data Store
     implementation(libs.androidx.datastore.preferences)
-
-    // Firebase
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

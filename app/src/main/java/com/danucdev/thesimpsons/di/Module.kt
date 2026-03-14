@@ -1,0 +1,95 @@
+package com.danucdev.thesimpsons.di
+
+import android.app.Application
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.room.Room
+import com.danucdev.thesimpsons.data.impl.DataRepositoryImpl
+import com.danucdev.thesimpsons.data.impl.UserPreferencesRepositoryImpl
+import com.danucdev.thesimpsons.data.local.dao.CharacterDao
+import com.danucdev.thesimpsons.data.local.dao.EpisodeDao
+import com.danucdev.thesimpsons.data.local.dao.LocationDao
+import com.danucdev.thesimpsons.data.local.db.AppDataBase
+import com.danucdev.thesimpsons.data.network.ApiClient
+import com.danucdev.thesimpsons.domain.repository.DataRepository
+import com.danucdev.thesimpsons.domain.repository.UserPreferencesRepository
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object Module {
+
+    private const val DATASTORE_NAME = "app_preferences"
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://thesimpsonsapi.com/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiClient(retrofit: Retrofit): ApiClient {
+        return retrofit.create(ApiClient::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDataBase(app: Application): AppDataBase {
+        return Room.databaseBuilder(
+            app,
+            AppDataBase::class.java,
+            "app_db"
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterDao(appDatabase: AppDataBase): CharacterDao {
+        return appDatabase.characterDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideEpisodeDao(appDatabase: AppDataBase): EpisodeDao {
+        return appDatabase.episodeDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationDao(appDatabase: AppDataBase): LocationDao {
+        return appDatabase.locationDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(DATASTORE_NAME)
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserPreferencesRepository(impl: UserPreferencesRepositoryImpl): UserPreferencesRepository =
+        impl
+
+    @Singleton
+    @Provides
+    fun provideDataRepository(impl:DataRepositoryImpl): DataRepository = impl
+}
